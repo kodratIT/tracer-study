@@ -6,15 +6,13 @@ use Modules\Survey\Models\SurveyResponse;
 use Modules\Survey\Models\TracerStudySession;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ProgressBarColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Actions\ViewAction;
+use Filament\Tables\Actions\ViewAction;
 
 class SurveyResponsesTable
 {
@@ -52,29 +50,47 @@ class SurveyResponsesTable
                         null
                     ),
                     
-                BadgeColumn::make('status_label')
+                TextColumn::make('status_label')
                     ->label('Status Respons')
-                    ->colors([
-                        'success' => 'Selesai',
-                        'warning' => 'Sebagian',
-                        'secondary' => 'Draft',
-                    ])
-                    ->icons([
-                        'heroicon-o-check-circle' => 'Selesai',
-                        'heroicon-o-clock' => 'Sebagian',
-                        'heroicon-o-pencil-square' => 'Draft',
-                    ])
+                    ->badge()
+                    ->color(fn ($record) => match($record->completion_status) {
+                        'completed' => 'success',
+                        'partial' => 'warning',
+                        'draft' => 'secondary',
+                        default => 'gray',
+                    })
+                    ->icon(fn ($record) => match($record->completion_status) {
+                        'completed' => 'heroicon-o-check-circle',
+                        'partial' => 'heroicon-o-clock',
+                        'draft' => 'heroicon-o-pencil-square',
+                        default => 'heroicon-o-question-mark-circle',
+                    })
                     ->sortable('completion_status'),
                     
-                ProgressBarColumn::make('completion_percentage')
+                TextColumn::make('completion_percentage')
                     ->label('Progress')
-                    ->color(fn ($state) => match (true) {
-                        $state >= 100 => 'success',
-                        $state >= 50 => 'warning',
-                        $state >= 25 => 'primary',
-                        default => 'secondary',
+                    ->formatStateUsing(function ($record) {
+                        $percentage = $record->completion_percentage;
+                        $color = match (true) {
+                            $percentage >= 100 => 'success',
+                            $percentage >= 70 => 'warning', 
+                            $percentage >= 40 => 'primary',
+                            default => 'gray',
+                        };
+                        
+                        // Create a simple progress display
+                        $bars = str_repeat('█', intval($percentage / 10));
+                        $empty = str_repeat('░', 10 - intval($percentage / 10));
+                        return $bars . $empty . " {$percentage}%";
                     })
-                    ->alignCenter(),
+                    ->color(fn ($record) => match (true) {
+                        $record->completion_percentage >= 100 => 'success',
+                        $record->completion_percentage >= 70 => 'warning',
+                        $record->completion_percentage >= 40 => 'primary', 
+                        default => 'gray',
+                    })
+                    ->alignCenter()
+                    ->fontFamily('mono'),
                     
                 IconColumn::make('is_overdue')
                     ->label('Terlambat')
