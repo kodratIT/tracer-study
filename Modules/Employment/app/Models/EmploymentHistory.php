@@ -40,4 +40,9 @@ class EmploymentHistory extends Model
     {
         return $this->belongsTo(Alumni::class, 'alumni_id', 'alumni_id');
     }
+
+    public function employer()
+    {
+        return $this->belongsTo(Employer::class, 'employer_id', 'employer_id');
+    }
 }
