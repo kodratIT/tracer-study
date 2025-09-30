@@ -12,17 +12,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Note: Laravel doesn't natively support MySQL partitioning
-        // This needs to be run as raw SQL after migration
-        DB::statement("
-            ALTER TABLE survey_responses 
-            PARTITION BY RANGE (session_id) (
-                PARTITION p_session_2024 VALUES LESS THAN (100),
-                PARTITION p_session_2025 VALUES LESS THAN (200),
-                PARTITION p_session_2026 VALUES LESS THAN (300),
-                PARTITION p_session_future VALUES LESS THAN MAXVALUE
-            )
-        ");
+        // Note: MySQL partitioning only works on MySQL, skip for other databases
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                ALTER TABLE survey_responses 
+                PARTITION BY RANGE (session_id) (
+                    PARTITION p_session_2024 VALUES LESS THAN (100),
+                    PARTITION p_session_2025 VALUES LESS THAN (200),
+                    PARTITION p_session_2026 VALUES LESS THAN (300),
+                    PARTITION p_session_future VALUES LESS THAN MAXVALUE
+                )
+            ");
+        }
     }
 
     /**
@@ -30,6 +31,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE survey_responses REMOVE PARTITIONING");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE survey_responses REMOVE PARTITIONING");
+        }
     }
 };
