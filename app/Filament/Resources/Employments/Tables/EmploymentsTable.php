@@ -31,7 +31,7 @@ class EmploymentsTable
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
-                    ->description(fn ($record) => $record->employer?->employer_name ?? $record->company_name),
+                    ->description(fn ($record) => $record->employer?->employer_name ?? 'Tidak diketahui'),
                     
                 BadgeColumn::make('job_level')
                     ->label('Level')

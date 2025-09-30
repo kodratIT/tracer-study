@@ -17,7 +17,6 @@ class EmploymentHistory extends Model
         'alumni_id',
         'employer_id',
         'job_title',
-        'company_name',
         'job_level',
         'start_date',
         'end_date',
@@ -47,11 +46,11 @@ class EmploymentHistory extends Model
     }
 
     /**
-     * Get the company name from employer relationship or manual input
+     * Get the company name from employer relationship
      */
     public function getCompanyDisplayNameAttribute()
     {
-        return $this->employer?->employer_name ?? $this->company_name ?? 'Tidak diketahui';
+        return $this->employer?->employer_name ?? 'Tidak diketahui';
     }
 
     /**

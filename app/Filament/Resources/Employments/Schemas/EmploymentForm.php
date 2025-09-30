@@ -86,14 +86,7 @@ class EmploymentForm
                                     ->url()
                                     ->maxLength(255),
                             ])
-                            ->columnSpan(1),
-                            
-                        TextInput::make('company_name')
-                            ->label('Nama Perusahaan (Manual)')
-                            ->placeholder('Isi jika perusahaan tidak ada dalam daftar')
-                            ->maxLength(255)
-                            ->helperText('Alternatif jika perusahaan belum terdaftar')
-                            ->columnSpan(1),
+                            ->columnSpan(2),
                     ])
                      ->columnSpanFull(),
 

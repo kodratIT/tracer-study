@@ -277,14 +277,7 @@ class AlumniForm
                                             ->url()
                                             ->maxLength(255),
                                     ])
-                                    ->columnSpan(1),
-                                    
-                                TextInput::make('company_name')
-                                    ->label('Nama Perusahaan (Manual)')
-                                    ->placeholder('Isi jika perusahaan tidak ada dalam daftar')
-                                    ->maxLength(255)
-                                    ->helperText('Alternatif jika perusahaan belum terdaftar')
-                                    ->columnSpan(1),
+                                    ->columnSpan(2),
                                     
                                 Select::make('job_level')
                                     ->label('Level Jabatan')
@@ -342,8 +335,7 @@ class AlumniForm
                             ->defaultItems(0)
                             ->itemLabel(fn (array $state): ?string => 
                                 (!empty($state['job_title']) ? $state['job_title'] : 'Pekerjaan Baru') .
-                                (!empty($state['employer_id']) ? ' di ' . (\Modules\Employment\Models\Employer::find($state['employer_id'])?->employer_name ?? 'Perusahaan') : 
-                                    (!empty($state['company_name']) ? ' di ' . $state['company_name'] : '')) .
+                                (!empty($state['employer_id']) ? ' di ' . (\Modules\Employment\Models\Employer::find($state['employer_id'])?->employer_name ?? 'Perusahaan') : '') .
                                 (!empty($state['start_date']) ? ' (' . $state['start_date'] . ')' : '') .
                                 (empty($state['end_date']) ? ' - Sekarang' : '')
                             )
