@@ -14,27 +14,24 @@ class TracerStudySeeder extends Seeder
     {
         $this->command->info('🌱 Starting Tracer Study Database Seeding...');
 
-        // Run migrations first
-        $this->command->info('📊 Running migrations...');
-        $this->call('migrate');
+        // Note: Migrations should be run before seeding
+        // Skipping migration call in seeder - run `php artisan migrate` first
 
         // 1. Seed basic master data
         $this->command->info('🏛️ Seeding campuses, faculties, and programs...');
-        $this->call(\Modules\Education\Database\Seeders\CampusSeeder::class);
-        $this->call(\Modules\Education\Database\Seeders\FacultySeeder::class);
-        $this->call(\Modules\Education\Database\Seeders\ProgramSeeder::class);
+        $this->seedEducationData();
 
         $this->command->info('💼 Seeding employers...');
-        $this->call(\Modules\Employment\Database\Seeders\EmployerSeeder::class);
+        $this->seedEmployers();
 
         $this->command->info('🛠️ Seeding skills...');
-        $this->call(\Modules\Skill\Database\Seeders\SkillSeeder::class);
+        $this->seedSkills();
 
         $this->command->info('📋 Seeding survey questions (BAN-PT standard)...');
-        $this->call(\Modules\Survey\Database\Seeders\TracerStudyQuestionSeeder::class);
+        $this->seedSurveyQuestions();
 
         // 2. Generate alumni data
-        $this->command->info('👨‍🎓 Generating 1000 alumni records...');
+        $this->command->info('👨‍🎓 Generating 50 alumni records...');
         $this->generateAlumniData();
 
         // 3. Generate employment history
@@ -56,7 +53,7 @@ class TracerStudySeeder extends Seeder
         $graduationYears = [2020, 2021, 2022, 2023, 2024];
         $genders = ['male', 'female'];
         
-        for ($i = 1; $i <= 1000; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
             $year = $faker->randomElement($graduationYears);
             $nim = $year . str_pad($i, 4, '0', STR_PAD_LEFT);
             
@@ -85,7 +82,7 @@ class TracerStudySeeder extends Seeder
                 'birth_date' => $faker->dateTimeBetween('1995-01-01', '2002-12-31')->format('Y-m-d'),
                 'graduation_year' => $year,
                 'gpa' => $faker->randomFloat(2, 2.50, 4.00),
-                'program_id' => $faker->numberBetween(1, 14),
+                'program_id' => $faker->numberBetween(1, 5),
                 'address_id' => $addressId,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -126,7 +123,7 @@ class TracerStudySeeder extends Seeder
 
             // Assign random skills
             $skillIds = DB::table('skills')->pluck('skill_id')->toArray();
-            $selectedSkills = $faker->randomElements($skillIds, $faker->numberBetween(3, 8));
+            $selectedSkills = $faker->randomElements($skillIds, $faker->numberBetween(2, min(6, count($skillIds))));
             $proficiencyLevels = ['beginner', 'intermediate', 'advanced', 'expert'];
 
             foreach ($selectedSkills as $skillId) {
@@ -145,7 +142,7 @@ class TracerStudySeeder extends Seeder
                 }
             }
 
-            if ($i % 100 === 0) {
+            if ($i % 10 === 0) {
                 $this->command->info("Generated $i alumni records...");
             }
         }
@@ -189,18 +186,13 @@ class TracerStudySeeder extends Seeder
 
                     DB::table('employment_histories')->insert([
                         'alumni_id' => $alumniId,
-                        'employer_id' => $faker->numberBetween(1, 40),
-                        'position' => $position,
-                        'department' => $faker->randomElement([
-                            'Information Technology', 'Engineering', 'Product Development',
-                            'Marketing', 'Sales', 'Human Resources', 'Finance', 'Operations'
-                        ]),
-                        'employment_type' => $faker->randomElement(['full_time', 'part_time', 'contract', 'freelance']),
+                        'employer_id' => $faker->numberBetween(1, 5),
+                        'job_title' => $position,
+                        'job_level' => $faker->randomElement(['entry', 'junior', 'senior', 'lead', 'manager']),
+                        'contract_type' => $faker->randomElement(['full_time', 'part_time', 'contract', 'freelance']),
                         'start_date' => $startDate->format('Y-m-d'),
                         'end_date' => $endDate ? $endDate->format('Y-m-d') : null,
-                        'salary' => (int) $salary,
-                        'employment_status' => $isCurrentJob ? 'employed' : $faker->randomElement(['resigned', 'contract_ended']),
-                        'job_description' => $faker->paragraph(2),
+                        'salary_range' => number_format($salary) . ' - ' . number_format($salary * 1.2),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -308,6 +300,160 @@ class TracerStudySeeder extends Seeder
             case 7: return $faker->numberBetween(0, 12);
             case 10: return $faker->city() . ', Indonesia';
             default: return $faker->sentence();
+        }
+    }
+
+    private function seedEducationData()
+    {
+        // Seed campuses
+        $campuses = [
+            ['campus_name' => 'Universitas Indonesia', 'city' => 'Depok', 'province' => 'Jawa Barat'],
+            ['campus_name' => 'Institut Teknologi Bandung', 'city' => 'Bandung', 'province' => 'Jawa Barat'],
+            ['campus_name' => 'Universitas Gadjah Mada', 'city' => 'Yogyakarta', 'province' => 'Yogyakarta'],
+            ['campus_name' => 'Institut Teknologi Sepuluh Nopember', 'city' => 'Surabaya', 'province' => 'Jawa Timur'],
+            ['campus_name' => 'Universitas Brawijaya', 'city' => 'Malang', 'province' => 'Jawa Timur'],
+        ];
+
+        foreach ($campuses as $campus) {
+            DB::table('campuses')->insert([
+                'campus_name' => $campus['campus_name'],
+                'city' => $campus['city'],
+                'province' => $campus['province'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Seed faculties
+        $faculties = [
+            ['faculty_name' => 'Fakultas Teknik', 'campus_id' => 1],
+            ['faculty_name' => 'Fakultas Ilmu Komputer', 'campus_id' => 1],
+            ['faculty_name' => 'Sekolah Teknik Elektro dan Informatika', 'campus_id' => 2],
+            ['faculty_name' => 'Fakultas Teknik', 'campus_id' => 3],
+            ['faculty_name' => 'Fakultas Teknologi Elektro dan Informatika Cerdas', 'campus_id' => 4],
+        ];
+
+        foreach ($faculties as $faculty) {
+            DB::table('faculties')->insert([
+                'faculty_name' => $faculty['faculty_name'],
+                'campus_id' => $faculty['campus_id'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Seed departments
+        $departments = [
+            ['department_name' => 'Teknik Informatika', 'faculty_id' => 1],
+            ['department_name' => 'Ilmu Komputer', 'faculty_id' => 2],
+            ['department_name' => 'Sistem Informasi', 'faculty_id' => 2],
+            ['department_name' => 'Teknik Informatika', 'faculty_id' => 3],
+            ['department_name' => 'Teknik Informatika', 'faculty_id' => 4],
+        ];
+
+        foreach ($departments as $department) {
+            DB::table('departments')->insert([
+                'department_name' => $department['department_name'],
+                'faculty_id' => $department['faculty_id'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Seed programs
+        $programs = [
+            ['program_name' => 'S1 Teknik Informatika', 'department_id' => 1, 'accreditation_status' => 'A', 'start_year' => 2010],
+            ['program_name' => 'S1 Ilmu Komputer', 'department_id' => 2, 'accreditation_status' => 'A', 'start_year' => 2005],
+            ['program_name' => 'S1 Sistem Informasi', 'department_id' => 3, 'accreditation_status' => 'B', 'start_year' => 2015],
+            ['program_name' => 'S2 Ilmu Komputer', 'department_id' => 2, 'accreditation_status' => 'A', 'start_year' => 2008],
+            ['program_name' => 'S1 Teknik Informatika', 'department_id' => 4, 'accreditation_status' => 'Unggul', 'start_year' => 2000],
+        ];
+
+        foreach ($programs as $program) {
+            DB::table('programs')->insert([
+                'program_name' => $program['program_name'],
+                'department_id' => $program['department_id'],
+                'accreditation_status' => $program['accreditation_status'],
+                'start_year' => $program['start_year'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    private function seedEmployers()
+    {
+        $employers = [
+            ['employer_name' => 'PT Gojek Indonesia', 'industry_type' => 'Technology'],
+            ['employer_name' => 'PT Tokopedia', 'industry_type' => 'E-commerce'],
+            ['employer_name' => 'PT Shopee International Indonesia', 'industry_type' => 'E-commerce'],
+            ['employer_name' => 'PT Bank Central Asia Tbk', 'industry_type' => 'Banking'],
+            ['employer_name' => 'PT Bank Mandiri (Persero) Tbk', 'industry_type' => 'Banking'],
+        ];
+
+        foreach ($employers as $employer) {
+            DB::table('employers')->insert([
+                'employer_name' => $employer['employer_name'],
+                'industry_type' => $employer['industry_type'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    private function seedSkills()
+    {
+        $skills = [
+            ['skill_name' => 'PHP Programming', 'skill_category' => 'technical', 'description' => 'Server-side programming language'],
+            ['skill_name' => 'Laravel Framework', 'skill_category' => 'technical', 'description' => 'PHP web application framework'],
+            ['skill_name' => 'JavaScript', 'skill_category' => 'technical', 'description' => 'Client-side programming language'],
+            ['skill_name' => 'Communication', 'skill_category' => 'soft_skill', 'description' => 'Effective verbal and written communication'],
+            ['skill_name' => 'Project Management', 'skill_category' => 'soft_skill', 'description' => 'Planning and executing projects'],
+            ['skill_name' => 'English', 'skill_category' => 'language', 'description' => 'English language proficiency'],
+        ];
+
+        foreach ($skills as $skill) {
+            DB::table('skills')->insert([
+                'skill_name' => $skill['skill_name'],
+                'skill_category' => $skill['skill_category'],
+                'description' => $skill['description'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    private function seedSurveyQuestions()
+    {
+        // Create default tracer study session
+        $sessionId = DB::table('tracer_study_sessions')->insertGetId([
+            'year' => 2024,
+            'start_date' => '2024-01-01',
+            'end_date' => '2024-12-31',
+            'description' => 'Tracer Study Alumni 2024 - Standar BAN-PT',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $questions = [
+            ['question_text' => 'Nama Lengkap', 'question_type' => 'text', 'display_order' => 1, 'is_required' => true],
+            ['question_text' => 'NIM', 'question_type' => 'text', 'display_order' => 2, 'is_required' => true],
+            ['question_text' => 'Tahun Lulus', 'question_type' => 'select', 'display_order' => 3, 'is_required' => true],
+            ['question_text' => 'Berapa lama waktu tunggu Anda untuk memperoleh pekerjaan pertama? (dalam bulan)', 'question_type' => 'text', 'display_order' => 4, 'is_required' => true],
+            ['question_text' => 'Seberapa erat hubungan antara bidang studi dengan pekerjaan Anda?', 'question_type' => 'radio', 'display_order' => 5, 'is_required' => true],
+        ];
+
+        foreach ($questions as $question) {
+            DB::table('survey_questions')->insert([
+                'session_id' => $sessionId,
+                'question_text' => $question['question_text'],
+                'question_type' => $question['question_type'],
+                'display_order' => $question['display_order'],
+                'is_required' => $question['is_required'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
     }
 
