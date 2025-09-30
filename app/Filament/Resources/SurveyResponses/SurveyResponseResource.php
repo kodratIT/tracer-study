@@ -22,7 +22,7 @@ class SurveyResponseResource extends Resource
     
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $recordTitleAttribute = 'display_name';
+    protected static ?string $recordTitleAttribute = 'response_id';
 
     public static function form(Schema $schema): Schema
     {

@@ -31,9 +31,10 @@ class SurveyQuestionsTable
                     ->color('info')
                     ->size('sm'),
                     
-                TextColumn::make('session.display_name')
+                TextColumn::make('session.year')
                     ->label('Sesi Tracer Study')
-                    ->searchable(['year'])
+                    ->formatStateUsing(fn ($record) => $record->session?->display_name ?? 'N/A')
+                    ->searchable()
                     ->sortable()
                     ->weight('medium')
                     ->limit(30)
@@ -123,7 +124,7 @@ class SurveyQuestionsTable
                         return TracerStudySession::query()
                             ->orderBy('year', 'desc')
                             ->get()
-                            ->pluck('display_name', 'session_id')
+                            ->mapWithKeys(fn ($session) => [$session->session_id => $session->display_name])
                             ->toArray();
                     })
                     ->placeholder('Semua Sesi'),

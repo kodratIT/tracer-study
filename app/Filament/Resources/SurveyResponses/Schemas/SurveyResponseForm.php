@@ -33,7 +33,12 @@ class SurveyResponseForm
                             
                         Select::make('session_id')
                             ->label('Sesi Tracer Study')
-                            ->relationship('session', 'display_name')
+                            ->relationship(
+                                name: 'session',
+                                titleAttribute: 'year',
+                                modifyQueryUsing: fn ($query) => $query->orderBy('year', 'desc')
+                            )
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                             ->searchable()
                             ->preload()
                             ->disabled()

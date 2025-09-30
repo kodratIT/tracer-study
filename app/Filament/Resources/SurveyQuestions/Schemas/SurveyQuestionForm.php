@@ -33,7 +33,7 @@ class SurveyQuestionForm
                             ->options(TracerStudySession::query()
                                 ->orderBy('year', 'desc')
                                 ->get()
-                                ->pluck('display_name', 'session_id')
+                                ->mapWithKeys(fn ($session) => [$session->session_id => $session->display_name])
                                 ->toArray())
                             ->searchable()
                             ->preload()
