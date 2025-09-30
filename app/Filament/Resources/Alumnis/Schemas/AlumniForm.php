@@ -237,12 +237,54 @@ class AlumniForm
                                     ->maxLength(255)
                                     ->columnSpan(2),
                                     
+                                Select::make('employer_id')
+                                    ->label('Perusahaan')
+                                    ->relationship('employer', 'employer_name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->placeholder('Pilih perusahaan atau kosongkan jika tidak terdaftar')
+                                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->employer_name} ({$record->industry_type})")
+                                    ->createOptionForm([
+                                        TextInput::make('employer_name')
+                                            ->label('Nama Perusahaan')
+                                            ->required()
+                                            ->maxLength(255),
+                                            
+                                        Select::make('industry_type')
+                                            ->label('Jenis Industri')
+                                            ->options([
+                                                'Technology' => '💻 Teknologi & IT',
+                                                'Finance' => '💰 Keuangan & Perbankan',
+                                                'Healthcare' => '🏥 Kesehatan & Medis',
+                                                'Education' => '🎓 Pendidikan',
+                                                'Manufacturing' => '🏭 Manufaktur',
+                                                'Retail' => '🛒 Retail & E-commerce',
+                                                'Construction' => '🏗️ Konstruksi',
+                                                'Transportation' => '🚛 Transportasi & Logistik',
+                                                'Energy' => '⚡ Energi & Utility',
+                                                'Agriculture' => '🌾 Pertanian',
+                                                'Media' => '📺 Media & Entertainment',
+                                                'Consulting' => '💼 Konsultan',
+                                                'Government' => '🏛️ Pemerintahan',
+                                                'Non-Profit' => '🤝 Non-Profit',
+                                                'Startup' => '🚀 Startup',
+                                                'Other' => '🔄 Lainnya',
+                                            ])
+                                            ->required(),
+                                            
+                                        TextInput::make('website')
+                                            ->label('Website Perusahaan')
+                                            ->url()
+                                            ->maxLength(255),
+                                    ])
+                                    ->columnSpan(1),
+                                    
                                 TextInput::make('company_name')
-                                    ->label('Nama Perusahaan')
-                                    ->placeholder('Contoh: PT. Teknologi Nusantara, Google Indonesia')
-                                    ->required()
+                                    ->label('Nama Perusahaan (Manual)')
+                                    ->placeholder('Isi jika perusahaan tidak ada dalam daftar')
                                     ->maxLength(255)
-                                    ->columnSpan(2),
+                                    ->helperText('Alternatif jika perusahaan belum terdaftar')
+                                    ->columnSpan(1),
                                     
                                 Select::make('job_level')
                                     ->label('Level Jabatan')
@@ -300,7 +342,8 @@ class AlumniForm
                             ->defaultItems(0)
                             ->itemLabel(fn (array $state): ?string => 
                                 (!empty($state['job_title']) ? $state['job_title'] : 'Pekerjaan Baru') .
-                                (!empty($state['company_name']) ? ' di ' . $state['company_name'] : '') .
+                                (!empty($state['employer_id']) ? ' di ' . (\Modules\Employment\Models\Employer::find($state['employer_id'])?->employer_name ?? 'Perusahaan') : 
+                                    (!empty($state['company_name']) ? ' di ' . $state['company_name'] : '')) .
                                 (!empty($state['start_date']) ? ' (' . $state['start_date'] . ')' : '') .
                                 (empty($state['end_date']) ? ' - Sekarang' : '')
                             )

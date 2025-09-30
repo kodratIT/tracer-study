@@ -45,4 +45,20 @@ class EmploymentHistory extends Model
     {
         return $this->belongsTo(Employer::class, 'employer_id', 'employer_id');
     }
+
+    /**
+     * Get the company name from employer relationship or manual input
+     */
+    public function getCompanyDisplayNameAttribute()
+    {
+        return $this->employer?->employer_name ?? $this->company_name ?? 'Tidak diketahui';
+    }
+
+    /**
+     * Get the industry type from employer relationship
+     */
+    public function getIndustryTypeAttribute()
+    {
+        return $this->employer?->industry_type;
+    }
 }
