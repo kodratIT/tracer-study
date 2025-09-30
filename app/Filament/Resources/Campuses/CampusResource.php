@@ -20,7 +20,7 @@ class CampusResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
     
-    protected static ?string $navigationLabel = '🏢 Campus';
+    protected static ?string $navigationLabel = 'Campus';
     
     protected static ?int $navigationSort = 1;
 

@@ -20,7 +20,7 @@ class ProgramResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
     
-    protected static ?string $navigationLabel = '📚 Program Studi';
+    protected static ?string $navigationLabel = 'Program Studi';
     
     protected static ?int $navigationSort = 4;
 

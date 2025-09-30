@@ -20,7 +20,7 @@ class AlumniResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     
-    protected static ?string $navigationLabel = '👥 Alumni';
+    protected static ?string $navigationLabel = 'Alumni';
     
     protected static ?int $navigationSort = 10;
 

@@ -20,7 +20,7 @@ class DepartmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
     
-    protected static ?string $navigationLabel = '🏛️ Jurusan';
+    protected static ?string $navigationLabel = 'Jurusan';
     
     protected static ?int $navigationSort = 3;
 

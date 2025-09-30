@@ -20,7 +20,7 @@ class FacultyResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
     
-    protected static ?string $navigationLabel = '🎓 Fakultas';
+    protected static ?string $navigationLabel = 'Fakultas';
     
     protected static ?int $navigationSort = 2;
 
