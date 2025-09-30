@@ -6,7 +6,9 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\DateFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -180,8 +182,31 @@ class EmploymentsTable
                     ])
                     ->placeholder('Semua Industri'),
                     
-                DateFilter::make('start_date')
-                    ->label('Filter Tanggal Mulai'),
+                Filter::make('start_date')
+                    ->label('Filter Tanggal Mulai')
+                    ->form([
+                        DatePicker::make('start_date_from')
+                            ->label('Mulai Dari Tanggal')
+                            ->placeholder('Pilih tanggal mulai')
+                            ->columnSpan(1),
+                            
+                        DatePicker::make('start_date_to')
+                            ->label('Sampai Tanggal')
+                            ->placeholder('Pilih tanggal akhir')
+                            ->columnSpan(1),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['start_date_from'],
+                                fn (Builder $query, $date): Builder => $query->where('start_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['start_date_to'],
+                                fn (Builder $query, $date): Builder => $query->where('start_date', '<=', $date),
+                            );
+                    })
+                    ->columns(2),
             ])
             ->recordActions([
                 EditAction::make()
