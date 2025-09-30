@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Alumnis\Tables;
 
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 
@@ -206,10 +206,9 @@ class AlumnisTable
 
             ])
             ->recordActions([
-                Action::make('view')
+                ViewAction::make()
                     ->label('Lihat')
-                    ->icon('heroicon-m-eye')
-                    ->url(fn ($record) => route('filament.admin.resources.alumnis.view', $record)),
+                    ->icon('heroicon-m-eye'),
                 EditAction::make()
                     ->label('Edit')
                     ->icon('heroicon-m-pencil-square'),
