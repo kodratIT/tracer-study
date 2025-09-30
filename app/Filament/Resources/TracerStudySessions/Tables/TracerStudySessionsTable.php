@@ -28,10 +28,11 @@ class TracerStudySessionsTable
                     ->color('primary')
                     ->alignCenter(),
                     
-                TextColumn::make('display_name')
+                TextColumn::make('year')
                     ->label('Nama Sesi')
+                    ->formatStateUsing(fn ($record) => $record->display_name)
                     ->searchable(['year', 'description'])
-                    ->sortable(false)
+                    ->sortable()
                     ->weight('medium')
                     ->description(fn ($record) => $record->description 
                         ? (strlen($record->description) > 80 
