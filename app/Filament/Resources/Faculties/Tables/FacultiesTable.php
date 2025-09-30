@@ -6,7 +6,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
+
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\SelectFilter;
@@ -68,9 +68,7 @@ class FacultiesTable
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->campus_name . ' (' . $record->city . ')'),
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->label('Lihat')
-                    ->icon('heroicon-m-eye'),
+
                 EditAction::make()
                     ->label('Edit')
                     ->icon('heroicon-m-pencil-square'),
