@@ -19,16 +19,6 @@ class CampusResource extends Resource
     protected static ?string $model = Campus::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
-    
-    protected static ?string $navigationLabel = 'Campus';
-    
-    protected static ?string $modelLabel = 'Campus';
-    
-    protected static ?string $pluralModelLabel = 'Campus';
-    
-
-    
-    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
