@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('employment_histories', function (Blueprint $table) {
             $table->id('employment_id');
             $table->unsignedBigInteger('alumni_id');
-            $table->unsignedBigInteger('employer_id');
+            $table->unsignedBigInteger('employer_id')->nullable();
             $table->string('job_title');
             $table->enum('job_level', ['entry', 'junior', 'senior', 'lead', 'manager', 'director', 'executive']);
             $table->date('start_date');
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('alumni_id')->references('alumni_id')->on('alumni')->onDelete('cascade');
-            $table->foreign('employer_id')->references('employer_id')->on('employers')->onDelete('cascade');
+            $table->foreign('employer_id')->references('employer_id')->on('employers')->onDelete('set null');
             $table->index('alumni_id');
             $table->index('employer_id');
             $table->index(['start_date', 'end_date']);

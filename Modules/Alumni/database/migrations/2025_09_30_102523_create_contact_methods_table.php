@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('contact_methods', function (Blueprint $table) {
             $table->id('contact_id');
             $table->unsignedBigInteger('alumni_id');
-            $table->enum('contact_type', ['email', 'phone', 'linkedin', 'instagram', 'facebook', 'twitter', 'website']);
+            $table->enum('contact_type', ['email', 'phone', 'whatsapp', 'linkedin', 'instagram', 'facebook', 'twitter', 'youtube', 'tiktok', 'github', 'website', 'other']);
             $table->string('contact_value');
             $table->boolean('is_primary')->default(false);
             $table->timestamps();
