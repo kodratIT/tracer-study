@@ -91,26 +91,26 @@ class TracerStudySessionForm
                             ->schema([
                                 Placeholder::make('total_responses')
                                     ->label('Total Respons')
-                                    ->content(fn ($record) => $record?->total_responses_count ?? 0),
+                                    ->content(fn ($record) => $record ? number_format($record->total_responses_count) : '0'),
                                     
                                 Placeholder::make('completed_responses')
                                     ->label('Respons Selesai')
-                                    ->content(fn ($record) => $record?->completed_responses_count ?? 0),
+                                    ->content(fn ($record) => $record ? number_format($record->completed_responses_count) : '0'),
                                     
                                 Placeholder::make('partial_responses')
                                     ->label('Respons Sebagian')
-                                    ->content(fn ($record) => $record?->partial_responses_count ?? 0),
+                                    ->content(fn ($record) => $record ? number_format($record->partial_responses_count) : '0'),
                                     
                                 Placeholder::make('response_rate')
                                     ->label('Tingkat Respons')
-                                    ->content(fn ($record) => ($record?->response_rate ?? 0) . '%'),
+                                    ->content(fn ($record) => $record ? number_format($record->response_rate, 1) . '%' : '0%'),
                             ]),
                             
                         Grid::make(3)
                             ->schema([
                                 Placeholder::make('duration')
                                     ->label('Durasi')
-                                    ->content(fn ($record) => ($record?->duration ?? 0) . ' hari'),
+                                    ->content(fn ($record) => $record ? $record->duration . ' hari' : '0 hari'),
                                     
                                 Placeholder::make('status')
                                     ->label('Status Sesi')
@@ -127,7 +127,7 @@ class TracerStudySessionForm
                                     
                                 Placeholder::make('created_info')
                                     ->label('Dibuat')
-                                    ->content(fn ($record) => $record?->created_at?->format('d M Y, H:i') ?? 'Baru'),
+                                    ->content(fn ($record) => $record?->created_at ? $record->created_at->format('d M Y, H:i') : 'Baru'),
                             ]),
                     ])
                      ->columnSpanFull(),
