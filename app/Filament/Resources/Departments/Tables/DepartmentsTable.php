@@ -37,12 +37,7 @@ class DepartmentsTable
                     ->icon('heroicon-m-building-office-2')
                     ->toggleable(),
                     
-                TextColumn::make('programs_count')
-                    ->label('Program Studi')
-                    ->counts('programs')
-                    ->badge()
-                    ->color('success')
-                    ->alignCenter(),
+
                     
                 TextColumn::make('created_at')
                     ->label('Dibuat')

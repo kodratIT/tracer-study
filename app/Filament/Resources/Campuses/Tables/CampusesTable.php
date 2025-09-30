@@ -38,22 +38,6 @@ class CampusesTable
                     ->color('info')
                     ->alignCenter(),
                     
-                TextColumn::make('departments_count')
-                    ->label('Jurusan')
-                    ->counts('departments')
-                    ->badge()
-                    ->color('warning')
-                    ->alignCenter()
-                    ->toggleable(),
-                    
-                TextColumn::make('programs_count')
-                    ->label('Program')
-                    ->counts('programs')
-                    ->badge()
-                    ->color('success')
-                    ->alignCenter()
-                    ->toggleable(),
-                    
                 TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime('d M Y H:i')

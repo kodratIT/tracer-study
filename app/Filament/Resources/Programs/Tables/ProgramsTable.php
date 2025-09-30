@@ -54,13 +54,7 @@ class ProgramsTable
                     ->getStateUsing(fn ($record) => $record->active_years)
                     ->icon('heroicon-m-calendar'),
                     
-                TextColumn::make('alumni_count')
-                    ->label('Alumni')
-                    ->counts('alumni')
-                    ->badge()
-                    ->color('info')
-                    ->alignCenter()
-                    ->toggleable(),
+
                     
                 TextColumn::make('created_at')
                     ->label('Dibuat')
