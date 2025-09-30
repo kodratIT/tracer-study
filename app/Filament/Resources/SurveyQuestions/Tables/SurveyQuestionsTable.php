@@ -199,7 +199,7 @@ class SurveyQuestionsTable
                             
                             foreach ($record->options as $option) {
                                 $weight = $option->weight != 0 ? " (Bobot: {$option->weight})" : '';
-                                $content .= '<li style="padding: 4px 0; border-bottom: 1px solid #f3f4f6;">#{$option->display_order} - ' . $option->option_text . $weight . '</li>';
+                                $content .= '<li style="padding: 4px 0; border-bottom: 1px solid #f3f4f6;">#' . $option->display_order . ' - ' . $option->option_text . $weight . '</li>';
                             }
                             
                             $content .= '</ul>';
@@ -236,8 +236,7 @@ class SurveyQuestionsTable
                         ->icon('heroicon-m-trash'),
                 ]),
             ])
-            ->defaultSort('session_id', 'desc')
-            ->secondarySort('display_order', 'asc')
+            ->defaultSort('display_order', 'asc')
             ->striped()
             ->searchPlaceholder('Cari pertanyaan, sesi...')
             ->emptyStateHeading('Belum Ada Pertanyaan Survey')
