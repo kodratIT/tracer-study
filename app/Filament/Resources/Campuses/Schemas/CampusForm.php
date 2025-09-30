@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Campuses\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Grid;
 
 class CampusForm
 {
