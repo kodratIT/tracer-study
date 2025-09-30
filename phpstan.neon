@@ -1,0 +1,50 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app/
+        - Modules/
+    
+    # Exclude paths
+    excludePaths:
+        - vendor/
+        - storage/
+        - bootstrap/cache/
+        - node_modules/
+        - public/
+    
+    # Additional rules
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    
+    # Ignore errors
+    ignoreErrors:
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::factory\(\)#'
+        - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+#'
+        - '#Unsafe usage of new static\(\)#'
+        
+    # Laravel specific
+    earlyTerminatingMethodCalls:
+        Illuminate\Http\RedirectResponse:
+            - send
+        Illuminate\Http\JsonResponse:
+            - send
+        Illuminate\Http\Response:
+            - send
+        Symfony\Component\HttpFoundation\Response:
+            - send
+
+    # Bootstrap file
+    bootstrapFiles:
+        - bootstrap/app.php
+    
+    # Memory limit
+    memoryLimitFile: .phpstan-memory-limit
+
+    # Tmp directory
+    tmpDir: storage/phpstan
+
+    # Treat php doc types as native
+    treatPhpDocTypesAsCertain: false

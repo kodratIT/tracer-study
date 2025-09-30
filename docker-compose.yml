@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  # Laravel App
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: tracer-study-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./storage/app/public:/var/www/html/public/storage
+    networks:
+      - tracer-study
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_DATABASE=tracer_study
+      - DB_USERNAME=tracer_user
+      - DB_PASSWORD=tracer_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: tracer-study-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/sites/default.conf:/etc/nginx/sites-available/default
+      - ./storage/logs/nginx:/var/log/nginx
+    networks:
+      - tracer-study
+    depends_on:
+      - app
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: tracer-study-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: tracer_study
+      MYSQL_USER: tracer_user
+      MYSQL_PASSWORD: tracer_password
+    networks:
+      - tracer-study
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: tracer-study-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - tracer-study
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  # Queue Worker
+  queue:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: tracer-study-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - tracer-study
+    depends_on:
+      - mysql
+      - redis
+    command: php artisan queue:work --sleep=3 --tries=3
+    environment:
+      - APP_ENV=local
+      - DB_HOST=mysql
+      - DB_DATABASE=tracer_study
+      - DB_USERNAME=tracer_user
+      - DB_PASSWORD=tracer_password
+      - REDIS_HOST=redis
+
+  # Scheduler
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: tracer-study-scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - tracer-study
+    depends_on:
+      - mysql
+      - redis
+    command: sh -c "while true; do php artisan schedule:run >> /dev/null 2>&1; sleep 60; done"
+    environment:
+      - APP_ENV=local
+      - DB_HOST=mysql
+      - DB_DATABASE=tracer_study
+      - DB_USERNAME=tracer_user
+      - DB_PASSWORD=tracer_password
+
+networks:
+  tracer-study:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:

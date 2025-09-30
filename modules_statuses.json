@@ -1,0 +1,9 @@
+{
+    "Alumni": true,
+    "Survey": true,
+    "Employment": true,
+    "Reports": true,
+    "Admin": true,
+    "Notification": true,
+    "Audit": true
+}
