@@ -28,15 +28,7 @@ class ProgramsTable
                     ->label('Jurusan')
                     ->searchable()
                     ->sortable()
-                    ->icon('heroicon-m-squares-2x2')
-                    ->description(fn ($record) => $record->department?->faculty?->faculty_name),
-                    
-                TextColumn::make('department.faculty.campus.campus_name')
-                    ->label('Campus')
-                    ->searchable()
-                    ->sortable()
-                    ->icon('heroicon-m-building-office-2')
-                    ->toggleable(),
+                    ->icon('heroicon-m-squares-2x2'),
                     
                 TextColumn::make('accreditation_status')
                     ->label('Akreditasi')
