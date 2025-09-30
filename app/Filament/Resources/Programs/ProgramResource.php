@@ -19,6 +19,12 @@ class ProgramResource extends Resource
     protected static ?string $model = Program::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    
+    protected static ?string $navigationLabel = 'Jurusan & Program Studi';
+    
+    protected static ?string $modelLabel = 'Program Studi';
+    
+    protected static ?string $pluralModelLabel = 'Program Studi';
 
     public static function form(Schema $schema): Schema
     {
