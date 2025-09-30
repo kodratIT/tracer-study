@@ -19,6 +19,10 @@ class FacultyResource extends Resource
     protected static ?string $model = Faculty::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
+    
+    protected static ?string $navigationLabel = '🎓 Fakultas';
+    
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
