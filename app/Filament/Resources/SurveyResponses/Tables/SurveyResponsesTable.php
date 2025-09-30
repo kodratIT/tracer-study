@@ -12,7 +12,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\Action;
 
 class SurveyResponsesTable
 {
@@ -255,7 +255,7 @@ class SurveyResponsesTable
                     ->columns(2),
             ])
             ->recordActions([
-                ViewAction::make()
+                Action::make('view')
                     ->label('Detail')
                     ->icon('heroicon-m-eye')
                     ->modalHeading(fn ($record) => 'Detail Respons: ' . $record->alumni?->name)
