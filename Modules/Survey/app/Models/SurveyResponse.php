@@ -149,4 +149,104 @@ class SurveyResponse extends Model
     {
         return $this->alumni?->name . ' - ' . $this->session?->display_name;
     }
+
+    /**
+     * Get status label in Indonesian
+     */
+    public function getStatusLabelAttribute()
+    {
+        return match($this->completion_status) {
+            'completed' => 'Selesai',
+            'partial' => 'Sebagian', 
+            'draft' => 'Draft',
+            default => 'Tidak Diketahui',
+        };
+    }
+
+    /**
+     * Get time since submission or last update
+     */
+    public function getTimeSinceAttribute()
+    {
+        if ($this->submitted_at) {
+            return $this->submitted_at->diffForHumans();
+        }
+        return $this->updated_at->diffForHumans() . ' (belum submit)';
+    }
+
+    /**
+     * Get response duration (time between creation and submission)
+     */
+    public function getResponseDurationAttribute()
+    {
+        if ($this->submitted_at) {
+            return $this->created_at->diffInMinutes($this->submitted_at);
+        }
+        return null;
+    }
+
+    /**
+     * Check if response is overdue (session has ended but not completed)
+     */
+    public function getIsOverdueAttribute()
+    {
+        if ($this->is_completed || !$this->session) {
+            return false;
+        }
+        
+        return now()->gt($this->session->end_date);
+    }
+
+    /**
+     * Get progress icon
+     */
+    public function getProgressIconAttribute()
+    {
+        return match($this->completion_status) {
+            'completed' => 'heroicon-o-check-circle',
+            'partial' => 'heroicon-o-clock', 
+            'draft' => 'heroicon-o-pencil-square',
+            default => 'heroicon-o-question-mark-circle',
+        };
+    }
+
+    /**
+     * Scope for overdue responses
+     */
+    public function scopeOverdue($query)
+    {
+        return $query->whereHas('session', function ($q) {
+            $q->where('end_date', '<', now());
+        })->where('completion_status', '!=', 'completed');
+    }
+
+    /**
+     * Scope for responses in active sessions
+     */
+    public function scopeInActiveSessions($query)
+    {
+        return $query->whereHas('session', function ($q) {
+            $q->where('is_active', true)
+              ->where('start_date', '<=', now())
+              ->where('end_date', '>=', now());
+        });
+    }
+
+    /**
+     * Scope for responses by session
+     */
+    public function scopeBySession($query, $sessionId)
+    {
+        return $query->where('session_id', $sessionId);
+    }
+
+    /**
+     * Scope for responses by graduation year
+     */
+    public function scopeByGraduationYear($query, $year)
+    {
+        return $query->whereHas('alumni', function ($q) use ($year) {
+            $q->where('graduation_year', $year);
+        });
+    }
 }
