@@ -237,6 +237,13 @@ class AlumniForm
                                     ->maxLength(255)
                                     ->columnSpan(2),
                                     
+                                TextInput::make('company_name')
+                                    ->label('Nama Perusahaan')
+                                    ->placeholder('Contoh: PT. Teknologi Nusantara, Google Indonesia')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
+                                    
                                 Select::make('job_level')
                                     ->label('Level Jabatan')
                                     ->options([
@@ -293,6 +300,7 @@ class AlumniForm
                             ->defaultItems(0)
                             ->itemLabel(fn (array $state): ?string => 
                                 (!empty($state['job_title']) ? $state['job_title'] : 'Pekerjaan Baru') .
+                                (!empty($state['company_name']) ? ' di ' . $state['company_name'] : '') .
                                 (!empty($state['start_date']) ? ' (' . $state['start_date'] . ')' : '') .
                                 (empty($state['end_date']) ? ' - Sekarang' : '')
                             )

@@ -17,6 +17,7 @@ class EmploymentHistory extends Model
         'alumni_id',
         'employer_id',
         'job_title',
+        'company_name',
         'job_level',
         'start_date',
         'end_date',

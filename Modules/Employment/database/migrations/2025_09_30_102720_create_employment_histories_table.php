@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('alumni_id');
             $table->unsignedBigInteger('employer_id')->nullable();
             $table->string('job_title');
-            $table->enum('job_level', ['entry', 'junior', 'senior', 'lead', 'manager', 'director', 'executive']);
+            $table->string('company_name')->nullable();
+            $table->enum('job_level', ['entry', 'junior', 'mid', 'senior', 'lead', 'supervisor', 'manager', 'director', 'vp', 'ceo']);
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->string('salary_range')->nullable();

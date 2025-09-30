@@ -97,30 +97,6 @@ class AlumnisTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                     
-                // Relationship Counts
-                TextColumn::make('employmentHistories_count')
-                    ->label('Pekerjaan')
-                    ->counts('employmentHistories')
-                    ->badge()
-                    ->color('info')
-                    ->suffix(' jobs')
-                    ->alignCenter(),
-                    
-                TextColumn::make('contactMethods_count')
-                    ->label('Kontak')
-                    ->counts('contactMethods')
-                    ->badge()
-                    ->color('warning')
-                    ->suffix(' metode')
-                    ->alignCenter(),
-                    
-                TextColumn::make('educationHistories_count')
-                    ->label('Pendidikan')
-                    ->counts('educationHistories')
-                    ->badge()
-                    ->color('primary')
-                    ->suffix(' riwayat')
-                    ->alignCenter(),
                     
                 // Timestamps
                 TextColumn::make('created_at')
@@ -226,6 +202,8 @@ class AlumnisTable
                     ->relationship('address', 'province')
                     ->searchable()
                     ->placeholder('Semua Provinsi'),
+                    
+
             ])
             ->recordActions([
                 ViewAction::make()
