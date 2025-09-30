@@ -5,5 +5,8 @@
     "Reports": true,
     "Admin": true,
     "Notification": true,
-    "Audit": true
+    "Audit": true,
+    "Education": true,
+    "Skill": true,
+    "Training": true
 }

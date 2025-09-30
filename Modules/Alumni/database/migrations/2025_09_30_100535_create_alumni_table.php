@@ -12,32 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('alumni', function (Blueprint $table) {
-            $table->id();
-            $table->string('nim')->unique();
+            $table->id('alumni_id');
+            $table->string('student_id')->unique();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
-            $table->year('graduation_year');
-            $table->string('major');
-            $table->string('faculty');
+            $table->enum('gender', ['male', 'female'])->nullable();
+            $table->date('birth_date')->nullable();
+            $table->integer('graduation_year');
             $table->decimal('gpa', 3, 2)->nullable();
-            $table->string('current_job')->nullable();
-            $table->string('current_company')->nullable();
-            $table->decimal('current_salary', 12, 2)->nullable();
-            $table->string('job_category')->nullable();
-            $table->string('work_location')->nullable();
-            $table->boolean('is_employed')->default(false);
-            $table->enum('employment_status', ['employed', 'unemployed', 'entrepreneur', 'continuing_study'])->default('unemployed');
-            $table->string('linkedin_profile')->nullable();
-            $table->text('address')->nullable();
-            $table->string('profile_photo')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->unsignedBigInteger('program_id')->nullable();
+            $table->unsignedBigInteger('address_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['graduation_year', 'major']);
-            $table->index(['is_employed', 'employment_status']);
-            $table->index('is_active');
+            $table->index(['graduation_year']);
+            $table->index(['program_id']);
+            $table->index(['address_id']);
+            $table->index('student_id');
         });
     }
 
