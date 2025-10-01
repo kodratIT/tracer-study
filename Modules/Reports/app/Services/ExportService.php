@@ -119,7 +119,7 @@ class ExportService
      */
     public function getDownloadUrl(string $filePath): string
     {
-        return route('export.download', ['file' => basename($filePath)]);
+        return route('reports.export.download', ['file' => basename($filePath)]);
     }
 
     /**
