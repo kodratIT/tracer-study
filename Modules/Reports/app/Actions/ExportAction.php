@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Storage;
 use Modules\Reports\Services\ExportService;
 use Modules\Education\Models\Program;
 
@@ -71,7 +72,7 @@ class ExportAction
                         ->send();
                         
                     // Return download response for automatic download
-                    $fullPath = storage_path('app/' . $filePath);
+                    $fullPath = Storage::path($filePath);
                     $fileName = 'alumni_export_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
                     
                     return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
@@ -128,7 +129,7 @@ class ExportAction
                         ->send();
                         
                     // Return download response for automatic download
-                    $fullPath = storage_path('app/' . $filePath);
+                    $fullPath = Storage::path($filePath);
                     $fileName = 'employment_export_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
                     
                     return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
@@ -196,7 +197,7 @@ class ExportAction
                         ->send();
                         
                     // Return download response for automatic download
-                    $fullPath = storage_path('app/' . $filePath);
+                    $fullPath = Storage::path($filePath);
                     $fileName = 'survey_responses_export_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
                     
                     return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
@@ -267,7 +268,7 @@ class ExportAction
                         ->send();
                         
                     // Return download response for automatic download
-                    $fullPath = storage_path('app/' . $filePath);
+                    $fullPath = Storage::path($filePath);
                     $fileName = 'comprehensive_report_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
                     
                     return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
