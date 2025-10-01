@@ -20,7 +20,12 @@ class SurveyResponseResource extends Resource
     
     protected static ?string $navigationLabel = 'Monitor Respons';
     
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 30;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Survey & Kuesioner';
+    }
 
     protected static ?string $recordTitleAttribute = 'response_id';
 

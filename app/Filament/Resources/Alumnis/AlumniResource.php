@@ -22,7 +22,13 @@ class AlumniResource extends Resource
     
     protected static ?string $navigationLabel = 'Alumni';
     
+
     protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Data Alumni';
+    }
 
     public static function form(Schema $schema): Schema
     {

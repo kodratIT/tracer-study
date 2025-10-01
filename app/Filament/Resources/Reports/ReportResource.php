@@ -21,7 +21,12 @@ class ReportResource extends Resource
     
     protected static ?string $navigationLabel = 'Laporan BAN-PT';
     
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Laporan & Analisis';
+    }
 
     protected static ?string $recordTitleAttribute = 'title';
 

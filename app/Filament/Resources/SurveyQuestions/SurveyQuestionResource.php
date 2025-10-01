@@ -22,7 +22,12 @@ class SurveyQuestionResource extends Resource
     
     protected static ?string $navigationLabel = 'Pertanyaan Survey';
     
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 20;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Survey & Kuesioner';
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -22,7 +22,12 @@ class TracerStudySessionResource extends Resource
     
     protected static ?string $navigationLabel = 'Sesi Tracer Study';
     
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Survey & Kuesioner';
+    }
 
     public static function form(Schema $schema): Schema
     {

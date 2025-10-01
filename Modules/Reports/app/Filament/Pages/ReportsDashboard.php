@@ -8,7 +8,7 @@ use Modules\Reports\Actions\ExportAction;
 
 class ReportsDashboard extends Page
 {
-    protected static string $navigationIcon = 'heroicon-o-chart-pie';
+    protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
     
     protected static string $view = 'reports::filament.pages.reports-dashboard';
     
@@ -16,9 +16,12 @@ class ReportsDashboard extends Page
     
     protected static ?string $title = 'Tracer Study Analytics';
     
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 20;
     
-    protected static ?string $navigationGroup = null;
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Laporan & Analisis';
+    }
 
     public function getHeaderWidgets(): array
     {

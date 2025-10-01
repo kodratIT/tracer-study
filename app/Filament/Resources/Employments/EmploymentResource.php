@@ -22,7 +22,12 @@ class EmploymentResource extends Resource
     
     protected static ?string $navigationLabel = 'Riwayat Pekerjaan';
     
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 20;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Data Alumni';
+    }
 
     public static function form(Schema $schema): Schema
     {

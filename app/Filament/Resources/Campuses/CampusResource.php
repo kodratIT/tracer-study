@@ -22,7 +22,12 @@ class CampusResource extends Resource
     
     protected static ?string $navigationLabel = 'Campus';
     
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Struktur Pendidikan';
+    }
 
     public static function form(Schema $schema): Schema
     {

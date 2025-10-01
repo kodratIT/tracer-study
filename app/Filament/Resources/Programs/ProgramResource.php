@@ -22,7 +22,12 @@ class ProgramResource extends Resource
     
     protected static ?string $navigationLabel = 'Program Studi';
     
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 40;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Struktur Pendidikan';
+    }
 
     public static function form(Schema $schema): Schema
     {
