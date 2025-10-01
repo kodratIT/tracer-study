@@ -3,9 +3,29 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Reports\Models\Report;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Alumni\AuthController;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Alumni Portal Routes
+Route::prefix('alumni')->name('alumni.')->group(function () {
+    // Guest routes (not authenticated)
+    Route::middleware('guest:alumni')->group(function () {
+        Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+        Route::post('/register', [AuthController::class, 'register']);
+    });
+
+    // Authenticated alumni routes
+    Route::middleware('auth:alumni')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+        Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
+        Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    });
 });
 
 // Route for downloading reports

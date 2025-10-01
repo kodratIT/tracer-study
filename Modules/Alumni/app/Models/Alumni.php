@@ -5,12 +5,14 @@ namespace Modules\Alumni\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Modules\Employment\Models\EmploymentHistory;
 use Modules\Education\Models\EducationHistory;
 
-class Alumni extends Model
+class Alumni extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $table = 'alumni';
     
@@ -27,12 +29,21 @@ class Alumni extends Model
         'gpa',
         'program_id',
         'address_id',
+        'password',
+        'email_verified_at',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
         'graduation_year' => 'integer',
         'gpa' => 'decimal:2',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
     protected $dates = [
