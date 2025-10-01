@@ -580,10 +580,25 @@ class BanPtReportService
         // Convert data to table format for PDF
         $tableData = $this->prepareDataForPdf($report, $reportData);
         
+        // Flatten summary for display (convert nested arrays to strings)
+        $flatSummary = [];
+        foreach ($summary as $key => $value) {
+            if (is_array($value)) {
+                $flatSummary[$key] = json_encode($value);
+            } else {
+                $flatSummary[$key] = $value;
+            }
+        }
+        
+        // Load the session relationship if not already loaded
+        if (!$report->relationLoaded('session')) {
+            $report->load('session');
+        }
+        
         $pdf = Pdf::loadView('reports::pdf.report-template', [
             'report' => $report,
             'data' => $tableData,
-            'summary' => $summary,
+            'summary' => $flatSummary,
         ]);
         
         $pdf->setPaper('A4', 'portrait');
