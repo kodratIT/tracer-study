@@ -1,70 +1,45 @@
 @extends('alumni.layouts.app')
 
-@section('title', 'Login')
+@section('title', 'Masuk')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                Alumni Portal
-            </h2>
-            <p class="mt-2 text-center text-sm text-gray-600">
-                Sign in to your account
-            </p>
-        </div>
-        
-        <form class="mt-8 space-y-6" method="POST" action="{{ route('alumni.login') }}">
-            @csrf
-            
-            <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    <label for="email" class="sr-only">Email address</label>
-                    <input id="email" name="email" type="email" autocomplete="email" required 
-                           class="relative block w-full px-3 py-2 border @error('email') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                           placeholder="Email address" value="{{ old('email') }}">
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div>
-                    <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required 
-                           class="relative block w-full px-3 py-2 border @error('password') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                           placeholder="Password">
-                    @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
+<x-organisms.auth-layout 
+    title="Selamat Datang"
+    subtitle="Masuk ke akun alumni Anda untuk mengakses sumber daya eksklusif dan terhubung dengan sesama lulusan"
+>
+    <x-organisms.auth-form 
+        :action="route('alumni.login')"
+        submit-text="Masuk"
+        :submit-icon="'<svg class=\'w-4 h-4 mr-2\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1\'></path></svg>'"
+        footer-text="Belum punya akun?"
+        :footer-link="route('alumni.register')"
+        footer-link-text="Daftar di sini"
+    >
+        <!-- Email Field -->
+        <x-molecules.form-field
+            name="email"
+            label="Alamat Email"
+            type="email"
+            placeholder="email@anda.com"
+            :required="true"
+            :icon="'<svg fill=\'currentColor\' viewBox=\'0 0 20 20\'><path d=\'M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z\'></path><path d=\'M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z\'></path></svg>'"
+        />
 
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <input id="remember" name="remember" type="checkbox" 
-                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="remember" class="ml-2 block text-sm text-gray-900">
-                        Remember me
-                    </label>
-                </div>
-            </div>
+        <!-- Password Field -->
+        <x-molecules.form-field
+            name="password"
+            label="Kata Sandi"
+            type="password"
+            placeholder="Masukkan kata sandi"
+            :required="true"
+            :icon="'<svg fill=\'currentColor\' viewBox=\'0 0 20 20\'><path fill-rule=\'evenodd\' d=\'M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z\' clip-rule=\'evenodd\'></path></svg>'"
+        />
 
-            <div>
-                <button type="submit" 
-                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Sign in
-                </button>
-            </div>
-
-            <div class="text-center">
-                <p class="text-sm text-gray-600">
-                    Don't have an account? 
-                    <a href="{{ route('alumni.register') }}" class="font-medium text-blue-600 hover:text-blue-500">
-                        Sign up
-                    </a>
-                </p>
-            </div>
-        </form>
-    </div>
-</div>
+        <!-- Remember Me Checkbox -->
+        <x-molecules.checkbox-field
+            name="remember"
+            label="Ingat saya selama 30 hari"
+        />
+    </x-organisms.auth-form>
+</x-organisms.auth-layout>
 @endsection
