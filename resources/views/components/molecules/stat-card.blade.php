@@ -35,45 +35,44 @@
     class="hover:shadow-lg transition-all duration-200 group"
 >
     <div class="{{ $padding }}">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center space-x-3">
-                    @if($icon)
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 rounded-xl {{ $iconColor }} flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                                {!! $icon !!}
-                            </div>
-                        </div>
-                    @endif
-                    
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-600 mb-1">{{ $title }}</p>
-                        <p class="text-2xl font-bold text-gray-900 tracking-tight">{{ $value }}</p>
-                        
-                        @if($subtitle)
-                            <p class="text-xs text-gray-500 mt-1">{{ $subtitle }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            
-            @if($trend)
-                <div class="flex-shrink-0">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                        {{ $trend['direction'] === 'up' ? 'bg-green-100 text-green-800' : ($trend['direction'] === 'down' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
-                        @if($trend['direction'] === 'up')
-                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 4.414 4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        @elseif($trend['direction'] === 'down')
-                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L10 15.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        @endif
-                        {{ $trend['value'] }}
-                    </span>
+        <!-- Icon and Title Section -->
+        <div class="flex items-center justify-between mb-4">
+            @if($icon)
+                <div class="w-12 h-12 rounded-lg {{ $iconColor }} flex items-center justify-center">
+                    {!! $icon !!}
                 </div>
             @endif
+            
+            @if($trend)
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium 
+                    {{ $trend['direction'] === 'up' ? 'bg-orange-100 text-orange-700' : ($trend['direction'] === 'down' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700') }}">
+                    @if($trend['direction'] === 'up')
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 4.414 4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    @elseif($trend['direction'] === 'down')
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L10 15.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    @else
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                    @endif
+                    {{ $trend['value'] }}
+                </span>
+            @endif
+        </div>
+        
+        <!-- Content Section -->
+        <div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-2">{{ $title }}</h3>
+            <div class="flex items-baseline space-x-2 mb-3">
+                <span class="text-2xl font-bold text-gray-900">{{ $value }}</span>
+                @if($subtitle)
+                    <span class="text-sm text-gray-500">{{ $subtitle }}</span>
+                @endif
+            </div>
         </div>
     </div>
 </x-molecules.card>
