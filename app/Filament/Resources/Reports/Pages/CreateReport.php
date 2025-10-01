@@ -28,33 +28,31 @@ class CreateReport extends CreateRecord
 
     protected function afterCreate(): void
     {
-        // Automatically start report generation after creation
-        try {
-            $service = app(BanPtReportService::class);
-            
-            // Set auto-expiration if enabled
-            if ($this->data['parameters']['auto_expire'] ?? true) {
-                $this->record->setExpiration(30);
-            }
-            
-            // Start report generation in background
-            dispatch(function () use ($service) {
-                $service->generateReport($this->record);
-            })->afterResponse();
-
-            Notification::make()
-                ->title('Laporan sedang diproses')
-                ->body('Laporan Anda sedang dibuat di latar belakang. Anda akan mendapat notifikasi setelah selesai.')
-                ->success()
-                ->send();
-
-        } catch (\Exception $e) {
-            Notification::make()
-                ->title('Gagal memproses laporan')
-                ->body('Laporan berhasil dibuat tetapi gagal diproses: ' . $e->getMessage())
-                ->warning()
-                ->send();
+        // Set auto-expiration if enabled
+        if ($this->data['parameters']['auto_expire'] ?? true) {
+            $this->record->setExpiration(30);
         }
+        
+        // Queue report generation for background processing
+        dispatch(function () {
+            $service = app(BanPtReportService::class);
+            try {
+                $service->generateReport($this->record);
+            } catch (\Exception $e) {
+                \Log::error('Report generation failed', [
+                    'report_id' => $this->record->report_id,
+                    'error' => $e->getMessage()
+                ]);
+                
+                $this->record->markAsFailed($e->getMessage());
+            }
+        })->afterResponse();
+
+        Notification::make()
+            ->title('Laporan berhasil dijadwalkan')
+            ->body('Laporan Anda telah dijadwalkan untuk dibuat di latar belakang. Refresh halaman untuk melihat progress.')
+            ->success()
+            ->send();
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

@@ -19,6 +19,7 @@ use Modules\Reports\Models\Report;
 use Modules\Survey\Models\TracerStudySession;
 use Modules\Reports\Services\BanPtReportService;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Cache;
 
 class ReportsTable
 {
@@ -128,7 +129,17 @@ class ReportsTable
 
                 SelectFilter::make('session_id')
                     ->label('Sesi Tracer Study')
-                    ->options(TracerStudySession::all()->pluck('display_name', 'session_id'))
+                    ->options(function () {
+                        return Cache::remember('reports_table_sessions_filter', 300, function () {
+                            return TracerStudySession::select('session_id', 'year', 'start_date', 'end_date')
+                                ->orderBy('year', 'desc')
+                                ->get()
+                                ->mapWithKeys(function ($session) {
+                                    $displayName = "Tracer Study {$session->year} ({$session->start_date->format('M d')} - {$session->end_date->format('M d')})";
+                                    return [$session->session_id => $displayName];
+                                });
+                        });
+                    })
                     ->placeholder('Semua sesi'),
 
                 SelectFilter::make('file_format')

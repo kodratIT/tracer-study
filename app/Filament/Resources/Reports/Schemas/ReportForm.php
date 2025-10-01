@@ -15,6 +15,7 @@ use Modules\Reports\Models\Report;
 use Modules\Survey\Models\TracerStudySession;
 use Modules\Education\Models\Program;
 use Modules\Alumni\Models\Alumni;
+use Illuminate\Support\Facades\Cache;
 
 class ReportForm
 {
@@ -31,13 +32,14 @@ class ReportForm
                                     ->label('Judul Laporan')
                                     ->required()
                                     ->maxLength(255)
+                                    ->live(onBlur: true)
                                     ->placeholder('contoh: Laporan Tracer Study 2024'),
 
                                 Select::make('report_type')
                                     ->label('Jenis Laporan')
                                     ->required()
                                     ->options(Report::REPORT_TYPES)
-                                    ->reactive()
+                                    ->live()
                                     ->placeholder('Pilih jenis laporan'),
                             ]),
 
@@ -45,7 +47,18 @@ class ReportForm
                             ->components([
                                 Select::make('session_id')
                                     ->label('Sesi Tracer Study')
-                                    ->options(TracerStudySession::all()->pluck('display_name', 'session_id'))
+                                    ->options(function () {
+                                        return Cache::remember('tracer_study_sessions_options', 300, function () {
+                                            return TracerStudySession::select('session_id', 'year', 'start_date', 'end_date')
+                                                ->orderBy('year', 'desc')
+                                                ->limit(50)
+                                                ->get()
+                                                ->mapWithKeys(function ($session) {
+                                                    $displayName = "Tracer Study {$session->year} ({$session->start_date->format('M d')} - {$session->end_date->format('M d')})";
+                                                    return [$session->session_id => $displayName];
+                                                });
+                                        });
+                                    })
                                     ->searchable()
                                     ->placeholder('Pilih sesi tracer study'),
 
@@ -63,6 +76,8 @@ class ReportForm
 
                 Section::make('Parameter Laporan')
                     ->description('Konfigurasi filter dan parameter tambahan')
+                    ->collapsible()
+                    ->collapsed()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -70,19 +85,28 @@ class ReportForm
                                     ->label('Tahun Lulus')
                                     ->multiple()
                                     ->options(function () {
-                                        $years = [];
-                                        $currentYear = date('Y');
-                                        for ($year = $currentYear; $year >= $currentYear - 10; $year--) {
-                                            $years[$year] = $year;
-                                        }
-                                        return $years;
+                                        return Cache::remember('graduation_years_options', 1800, function () {
+                                            $years = [];
+                                            $currentYear = date('Y');
+                                            for ($year = $currentYear; $year >= $currentYear - 15; $year--) {
+                                                $years[$year] = $year;
+                                            }
+                                            return $years;
+                                        });
                                     })
                                     ->placeholder('Semua tahun lulus'),
 
                                 Select::make('parameters.programs')
                                     ->label('Program Studi')
                                     ->multiple()
-                                    ->options(Program::all()->pluck('program_name', 'program_id'))
+                                    ->options(function () {
+                                        return Cache::remember('programs_options', 600, function () {
+                                            return Program::select('program_id', 'program_name')
+                                                ->whereHas('alumni')
+                                                ->orderBy('program_name')
+                                                ->pluck('program_name', 'program_id');
+                                        });
+                                    })
                                     ->searchable()
                                     ->placeholder('Semua program studi'),
                             ]),
