@@ -66,9 +66,15 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Export Successful!')
-                        ->body("Alumni data exported successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
+                        ->body("Alumni data exported successfully. File size: {$fileInfo['size_human']}")
                         ->success()
                         ->send();
+                        
+                    // Return download response for automatic download
+                    $fullPath = storage_path('app/' . $filePath);
+                    $fileName = 'alumni_export_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+                    
+                    return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
                         
                 } catch (\Exception $e) {
                     Notification::make()
@@ -76,6 +82,8 @@ class ExportAction
                         ->body('Failed to export alumni data: ' . $e->getMessage())
                         ->danger()
                         ->send();
+                        
+                    return null;
                 }
             });
     }
@@ -115,9 +123,15 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Export Successful!')
-                        ->body("Employment data exported successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
+                        ->body("Employment data exported successfully. File size: {$fileInfo['size_human']}")
                         ->success()
                         ->send();
+                        
+                    // Return download response for automatic download
+                    $fullPath = storage_path('app/' . $filePath);
+                    $fileName = 'employment_export_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+                    
+                    return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
                         
                 } catch (\Exception $e) {
                     Notification::make()
@@ -125,6 +139,8 @@ class ExportAction
                         ->body('Failed to export employment data: ' . $e->getMessage())
                         ->danger()
                         ->send();
+                        
+                    return null;
                 }
             });
     }
@@ -175,9 +191,15 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Export Successful!')
-                        ->body("Survey responses exported successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
+                        ->body("Survey responses exported successfully. File size: {$fileInfo['size_human']}")
                         ->success()
                         ->send();
+                        
+                    // Return download response for automatic download
+                    $fullPath = storage_path('app/' . $filePath);
+                    $fileName = 'survey_responses_export_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+                    
+                    return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
                         
                 } catch (\Exception $e) {
                     Notification::make()
@@ -185,6 +207,8 @@ class ExportAction
                         ->body('Failed to export survey responses: ' . $e->getMessage())
                         ->danger()
                         ->send();
+                        
+                    return null;
                 }
             });
     }
@@ -238,9 +262,15 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Comprehensive Report Generated!')
-                        ->body("Multi-sheet report created successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
+                        ->body("Multi-sheet report created successfully. File size: {$fileInfo['size_human']}")
                         ->success()
                         ->send();
+                        
+                    // Return download response for automatic download
+                    $fullPath = storage_path('app/' . $filePath);
+                    $fileName = 'comprehensive_report_' . date('Y-m-d_H-i-s') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+                    
+                    return response()->download($fullPath, $fileName)->deleteFileAfterSend(true);
                         
                 } catch (\Exception $e) {
                     Notification::make()
@@ -248,6 +278,8 @@ class ExportAction
                         ->body('Failed to generate comprehensive report: ' . $e->getMessage())
                         ->danger()
                         ->send();
+                        
+                    return null;
                 }
             });
     }
