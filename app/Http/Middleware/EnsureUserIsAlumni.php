@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectIfNotAlumni
+class EnsureUserIsAlumni
 {
     /**
      * Handle an incoming request.
@@ -16,14 +16,15 @@ class RedirectIfNotAlumni
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // If admin is logged in and trying to access alumni area
-        if (Auth::guard('web')->check() && $request->is('alumni/*')) {
-            return redirect()->route('filament.admin.pages.dashboard')
-                ->with('error', 'Anda sudah login sebagai admin.');
+        // Check if user is authenticated with 'alumni' guard
+        if (!Auth::guard('alumni')->check()) {
+            // Redirect to alumni login if not authenticated
+            return redirect()->route('alumni.login');
         }
 
-        // If alumni is logged in and trying to access admin area
-        if (Auth::guard('alumni')->check() && $request->is('admin/*')) {
+        // Check if alumni is trying to access admin routes
+        if ($request->is('admin/*')) {
+            // Alumni trying to access admin area - redirect to alumni dashboard
             return redirect()->route('alumni.dashboard')
                 ->with('error', 'Anda tidak memiliki akses ke area admin.');
         }

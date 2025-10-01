@@ -177,6 +177,9 @@ return [
             'rule-name' => 'pesan-khusus',
         ],
     ],
+    
+    // Custom authentication messages
+    'auth_failed' => 'Kredensial yang diberikan tidak sesuai dengan data kami.',
 
     /*
     |--------------------------------------------------------------------------

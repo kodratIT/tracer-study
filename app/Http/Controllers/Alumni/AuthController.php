@@ -23,13 +23,19 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        // Check if admin is already logged in
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('filament.admin.pages.dashboard')
+                ->with('error', 'Anda sudah login sebagai admin.');
+        }
+
         if (Auth::guard('alumni')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/alumni/dashboard');
+            return redirect()->intended(route('alumni.dashboard'));
         }
 
         throw ValidationException::withMessages([
-            'email' => __('The provided credentials do not match our records.'),
+            'email' => __('validation.auth_failed'),
         ]);
     }
 
@@ -69,7 +75,8 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/alumni/login');
+        return redirect()->route('alumni.login')
+            ->with('success', 'Anda telah berhasil logout.');
     }
 
     public function dashboard()
