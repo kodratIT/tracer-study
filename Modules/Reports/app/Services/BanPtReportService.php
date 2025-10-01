@@ -548,7 +548,7 @@ class BanPtReportService
             Storage::makeDirectory('reports');
         }
 
-        switch ($report->format) {
+        switch ($report->file_format) {
             case Report::FORMAT_PDF:
                 $this->generatePdfFile($report, $data, $filePath);
                 break;
@@ -562,7 +562,7 @@ class BanPtReportService
                 break;
                 
             default:
-                throw new \Exception("Unsupported file format: {$report->format}");
+                throw new \Exception("Unsupported file format: {$report->file_format}");
         }
 
         return $filePath;
@@ -621,7 +621,7 @@ class BanPtReportService
             return [];
         }
 
-        switch ($report->type) {
+        switch ($report->report_type) {
             case 'employment_statistics':
                 // Group by program for summary
                 $programs = collect($data)->groupBy('program');
@@ -675,7 +675,7 @@ class BanPtReportService
     protected function generateFileName(Report $report): string
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
-        $extension = match($report->format) {
+        $extension = match($report->file_format) {
             Report::FORMAT_PDF => 'pdf',
             Report::FORMAT_EXCEL => 'xlsx',
             Report::FORMAT_CSV => 'csv',
