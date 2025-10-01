@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Pages\Actions\CreateAction;
 use Modules\Reports\Models\Report;
+use Modules\Reports\Actions\ExportAction;
 
 class ListReports extends ListRecords
 {
@@ -18,6 +19,12 @@ class ListReports extends ListRecords
             Actions\CreateAction::make()
                 ->label('Buat Laporan Baru')
                 ->icon('heroicon-o-plus'),
+            ExportAction::alumni()
+                ->label('Export Alumni'),
+            ExportAction::employment()
+                ->label('Export Pekerjaan'),
+            ExportAction::comprehensive()
+                ->label('Export Komprehensif'),
         ];
     }
 

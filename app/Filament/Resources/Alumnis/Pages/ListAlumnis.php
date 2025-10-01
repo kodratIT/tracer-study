@@ -8,6 +8,7 @@ use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use Modules\Reports\Actions\ExportAction;
 
 class ListAlumnis extends ListRecords
 {
@@ -19,6 +20,7 @@ class ListAlumnis extends ListRecords
             CreateAction::make()
                 ->label('Tambah Alumni')
                 ->icon('heroicon-m-plus'),
+            ExportAction::alumni(),
         ];
     }
 
