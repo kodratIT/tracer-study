@@ -66,14 +66,8 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Export Successful!')
-                        ->body("Alumni data exported successfully. File size: {$fileInfo['size_human']}")
+                        ->body("Alumni data exported successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
                         ->success()
-                        ->actions([
-                            \Filament\Notifications\Actions\Action::make('download')
-                                ->label('Download')
-                                ->url($fileInfo['download_url'])
-                                ->openUrlInNewTab(),
-                        ])
                         ->send();
                         
                 } catch (\Exception $e) {
@@ -121,14 +115,8 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Export Successful!')
-                        ->body("Employment data exported successfully. File size: {$fileInfo['size_human']}")
+                        ->body("Employment data exported successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
                         ->success()
-                        ->actions([
-                            \Filament\Notifications\Actions\Action::make('download')
-                                ->label('Download')
-                                ->url($fileInfo['download_url'])
-                                ->openUrlInNewTab(),
-                        ])
                         ->send();
                         
                 } catch (\Exception $e) {
@@ -187,14 +175,8 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Export Successful!')
-                        ->body("Survey responses exported successfully. File size: {$fileInfo['size_human']}")
+                        ->body("Survey responses exported successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
                         ->success()
-                        ->actions([
-                            \Filament\Notifications\Actions\Action::make('download')
-                                ->label('Download')
-                                ->url($fileInfo['download_url'])
-                                ->openUrlInNewTab(),
-                        ])
                         ->send();
                         
                 } catch (\Exception $e) {
@@ -256,14 +238,8 @@ class ExportAction
                     
                     Notification::make()
                         ->title('Comprehensive Report Generated!')
-                        ->body("Multi-sheet report created successfully. File size: {$fileInfo['size_human']}")
+                        ->body("Multi-sheet report created successfully. File size: {$fileInfo['size_human']} - [Download here]({$fileInfo['download_url']})")
                         ->success()
-                        ->actions([
-                            \Filament\Notifications\Actions\Action::make('download')
-                                ->label('Download')
-                                ->url($fileInfo['download_url'])
-                                ->openUrlInNewTab(),
-                        ])
                         ->send();
                         
                 } catch (\Exception $e) {
