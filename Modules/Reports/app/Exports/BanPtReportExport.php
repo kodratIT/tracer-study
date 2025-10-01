@@ -32,7 +32,7 @@ class BanPtReportExport implements FromArray, WithHeadings, WithStyles, WithTitl
         }
 
         // Return headings based on report type
-        switch ($this->report->type) {
+        switch ($this->report->report_type) {
             case 'employment_statistics':
                 return [
                     'Alumni ID',

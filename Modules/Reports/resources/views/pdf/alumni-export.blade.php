@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Alumni Data Export</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            line-height: 1.3;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4472C4;
+            padding-bottom: 10px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            color: #4472C4;
+            margin: 0;
+        }
+        
+        .header p {
+            font-size: 12px;
+            color: #666;
+            margin: 5px 0;
+        }
+        
+        .filters {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #4472C4;
+        }
+        
+        .filters h3 {
+            font-size: 12px;
+            margin: 0 0 8px 0;
+            color: #4472C4;
+        }
+        
+        .filters p {
+            margin: 3px 0;
+            font-size: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 8px;
+        }
+        
+        table th {
+            background-color: #4472C4;
+            color: white;
+            padding: 6px 4px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+        
+        table td {
+            padding: 4px 4px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .status-employed {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .status-unemployed {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Data Alumni Export</h1>
+        <p>Generated on {{ $generated_at->format('d F Y H:i:s') }}</p>
+        <p>Total Records: {{ $alumni->count() }} alumni</p>
+    </div>
+
+    @if(!empty($filters))
+    <div class="filters">
+        <h3>Applied Filters:</h3>
+        @if(!empty($filters['graduation_years']))
+            <p><strong>Graduation Years:</strong> {{ implode(', ', $filters['graduation_years']) }}</p>
+        @endif
+        @if(!empty($filters['program_ids']))
+            <p><strong>Programs:</strong> {{ count($filters['program_ids']) }} programs selected</p>
+        @endif
+        @if(empty($filters))
+            <p>No filters applied - showing all alumni data</p>
+        @endif
+    </div>
+    @endif
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>ID</th>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Gender</th>
+                <th>Graduation Year</th>
+                <th>GPA</th>
+                <th>Employment Status</th>
+                <th>Job Title</th>
+                <th>Company</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($alumni as $index => $alumnus)
+                @php
+                    $latestEmployment = $alumnus->employmentHistories->first();
+                    $isEmployed = !empty($latestEmployment);
+                @endphp
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $alumnus->alumni_id }}</td>
+                    <td>{{ $alumnus->student_id }}</td>
+                    <td>{{ $alumnus->name }}</td>
+                    <td>{{ $alumnus->email }}</td>
+                    <td>{{ $alumnus->phone }}</td>
+                    <td>{{ $alumnus->gender }}</td>
+                    <td>{{ $alumnus->graduation_year }}</td>
+                    <td>{{ $alumnus->gpa }}</td>
+                    <td class="{{ $isEmployed ? 'status-employed' : 'status-unemployed' }}">
+                        {{ $isEmployed ? 'Bekerja' : 'Belum Bekerja' }}
+                    </td>
+                    <td>{{ $latestEmployment?->job_title ?? '-' }}</td>
+                    <td>{{ $latestEmployment?->company_name ?? '-' }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="12" style="text-align: center; padding: 20px;">
+                        No alumni data available
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>
+            Alumni Data Export | Generated by Tracer Study System<br>
+            Generated on {{ $generated_at->format('d F Y H:i:s') }}
+        </p>
+    </div>
+</body>
+</html>
