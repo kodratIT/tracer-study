@@ -8,7 +8,7 @@
         
         <!-- Progress Header -->
         <div class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center justify-between mb-4">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">Tracer Study {{ $session->year }}</h1>
                     <p class="text-sm text-gray-600 mt-1">Jawab semua pertanyaan dengan jujur dan lengkap</p>
@@ -20,16 +20,16 @@
             </div>
             
             <!-- Progress Bar -->
-            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-600 h-2.5 rounded-full transition-all duration-500" style="width: {{ $progress }}%"></div>
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: {{ $progress }}%"></div>
             </div>
             
             <div class="flex items-center justify-between mt-3 text-sm">
                 <span class="text-gray-600">
-                    <span id="answered-count">{{ $answers->filter(fn($a) => !$a->is_empty)->count() }}</span> / {{ $questions->count() }} pertanyaan terjawab
+                    <span id="answered-count">{{ $answers->filter(fn($a) => !$a->is_empty)->count() }}</span> dari {{ $questions->count() }} terjawab
                 </span>
                 <span id="auto-save-indicator" class="text-gray-500 flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     <span id="save-status">Semua perubahan tersimpan</span>
@@ -40,14 +40,14 @@
         @if($errors->any())
             <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                     </svg>
-                    <div>
+                    <div class="flex-1">
                         <p class="text-sm font-medium text-red-800">Terdapat kesalahan:</p>
-                        <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
+                        <ul class="mt-1.5 text-sm text-red-700 space-y-1">
                             @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                                <li>• {{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -68,32 +68,38 @@
                     
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 question-card" data-question-id="{{ $question->question_id }}">
                         <!-- Question Header -->
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+                        <div class="mb-4">
+                            <div class="flex items-start justify-between gap-4 mb-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold flex-shrink-0">
                                         {{ $questionNumber }}
                                     </span>
-                                    <span class="text-sm font-medium text-gray-500">dari {{ $questions->count() }}</span>
-                                </div>
-                                <h3 class="text-lg font-medium text-gray-900">
-                                    {{ $question->question_text }}
                                     @if($question->is_required)
-                                        <span class="text-red-500">*</span>
+                                        <span class="px-2.5 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded">
+                                            Wajib
+                                        </span>
                                     @endif
-                                </h3>
+                                </div>
+                                <div id="status-{{ $question->question_id }}" class="flex items-center gap-1.5 text-sm">
+                                    @if($answer && !$answer->is_empty)
+                                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-green-700">Terjawab</span>
+                                    @else
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-500">Belum dijawab</span>
+                                    @endif
+                                </div>
                             </div>
-                            <div>
+                            <h3 class="text-lg font-medium text-gray-900">
+                                {{ $question->question_text }}
                                 @if($question->is_required)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Wajib
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                                        Opsional
-                                    </span>
+                                    <span class="text-red-500">*</span>
                                 @endif
-                            </div>
+                            </h3>
                         </div>
 
                         <!-- Question Input -->
@@ -103,43 +109,32 @@
                                 'alumni.survey.partials.question-types.text'
                             ], ['question' => $question, 'answer' => $answer])
                         </div>
-
-                        <!-- Answer Status Indicator -->
-                        <div class="mt-3 flex items-center text-sm" id="status-{{ $question->question_id }}">
-                            @if($answer && !$answer->is_empty)
-                                <svg class="w-4 h-4 text-green-600 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-green-700">Terjawab</span>
-                            @else
-                                <svg class="w-4 h-4 text-gray-400 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-500">Belum dijawab</span>
-                            @endif
-                        </div>
                     </div>
                 @endforeach
             </div>
 
             <!-- Action Buttons -->
             <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-4">
                     <form action="{{ route('alumni.survey.save-draft', $response) }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-                            </svg>
-                            Simpan Draft
+                        <button type="submit" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                                </svg>
+                                Simpan Draft
+                            </span>
                         </button>
                     </form>
                     
-                    <button type="submit" id="continue-btn" class="inline-flex items-center px-8 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-xl">
-                        Review Jawaban
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
+                    <button type="submit" id="continue-btn" class="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                        <span class="flex items-center gap-2">
+                            Review Jawaban
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </span>
                     </button>
                 </div>
             </div>
@@ -166,17 +161,20 @@ function updateSaveStatus(status, message) {
         indicator.classList.remove('text-gray-500', 'text-green-600');
         indicator.classList.add('text-blue-600');
         statusText.textContent = 'Menyimpan...';
-        indicator.querySelector('svg').classList.add('animate-spin');
+        const svg = indicator.querySelector('svg');
+        svg.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
+        svg.classList.add('animate-spin');
     } else if (status === 'saved') {
         indicator.classList.remove('text-gray-500', 'text-blue-600');
         indicator.classList.add('text-green-600');
         statusText.textContent = message || 'Tersimpan';
-        indicator.querySelector('svg').classList.remove('animate-spin');
+        const svg = indicator.querySelector('svg');
+        svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+        svg.classList.remove('animate-spin');
     } else {
         indicator.classList.remove('text-blue-600', 'text-green-600');
         indicator.classList.add('text-gray-500');
         statusText.textContent = message || 'Semua perubahan tersimpan';
-        indicator.querySelector('svg').classList.remove('animate-spin');
     }
 }
 
@@ -203,16 +201,20 @@ function saveAnswer(questionId, answerData) {
         if (data.success) {
             // Update progress
             const progressBar = document.getElementById('progress-bar');
-            progressBar.style.width = data.progress + '%';
-            document.querySelector('#progress-bar').parentElement.previousElementSibling.querySelector('.text-blue-600').textContent = data.progress + '%';
+            const progressText = document.querySelector('.text-3xl.font-bold.text-blue-600');
+            const answeredCount = document.getElementById('answered-count');
             
-            updateSaveStatus('saved', `Tersimpan pada ${data.saved_at}`);
+            progressBar.style.width = data.progress + '%';
+            progressText.textContent = data.progress + '%';
+            answeredCount.textContent = data.answered_count;
+            
+            updateSaveStatus('saved', `Tersimpan ${data.saved_at}`);
             
             // Update answer status indicator
             const statusElement = document.getElementById(`status-${questionId}`);
             if (statusElement) {
                 statusElement.innerHTML = `
-                    <svg class="w-4 h-4 text-green-600 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                     </svg>
                     <span class="text-green-700">Terjawab</span>
@@ -233,7 +235,7 @@ function debouncedSave(questionId, answerData) {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
         saveAnswer(questionId, answerData);
-    }, 1000); // Save after 1 second of inactivity
+    }, 1000);
 }
 
 // Attach event listeners to all inputs

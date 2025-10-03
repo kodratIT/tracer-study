@@ -1,7 +1,7 @@
 {{-- Select Dropdown Question Type --}}
 <select 
     name="answer_{{ $question->question_id }}"
-    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
+    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
     @if($question->is_required) required @endif
 >
     <option value="">-- Pilih salah satu --</option>

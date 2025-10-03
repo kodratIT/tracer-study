@@ -9,7 +9,7 @@
     name="answer_{{ $question->question_id }}"
     rows="{{ $rows }}"
     placeholder="Tuliskan jawaban Anda di sini..."
-    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-y"
+    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-y"
     @if($question->is_required) required @endif
     maxlength="{{ $maxLength }}"
     id="textarea_{{ $question->question_id }}"

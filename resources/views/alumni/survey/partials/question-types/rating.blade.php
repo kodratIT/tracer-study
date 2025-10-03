@@ -8,7 +8,7 @@
 
 <div class="py-4">
     <!-- Rating Options -->
-    <div class="flex items-center justify-center gap-4 mb-4">
+    <div class="flex items-center justify-center gap-3 mb-6">
         @for($i = $minValue; $i <= $maxValue; $i += $step)
             <label class="flex flex-col items-center cursor-pointer group">
                 <input 
@@ -19,15 +19,13 @@
                     class="sr-only peer"
                     @if($question->is_required) required @endif
                 />
-                <div class="w-14 h-14 flex items-center justify-center rounded-full border-2 border-gray-300 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white group-hover:border-blue-400 transition-all">
+                <div class="w-12 h-12 flex items-center justify-center rounded-lg border-2 border-gray-300 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white group-hover:border-blue-500 group-hover:bg-blue-50 transition-all">
                     <span class="text-lg font-semibold">{{ $i }}</span>
                 </div>
                 @if($i == $minValue)
-                    <span class="mt-2 text-xs text-gray-500 text-center">Sangat<br>Tidak Puas</span>
+                    <span class="mt-2 text-xs text-gray-500 text-center">Rendah</span>
                 @elseif($i == $maxValue)
-                    <span class="mt-2 text-xs text-gray-500 text-center">Sangat<br>Puas</span>
-                @else
-                    <span class="mt-2 text-xs text-gray-400">&nbsp;</span>
+                    <span class="mt-2 text-xs text-gray-500 text-center">Tinggi</span>
                 @endif
             </label>
         @endfor
