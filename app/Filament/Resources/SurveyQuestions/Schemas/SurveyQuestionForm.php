@@ -108,7 +108,7 @@ class SurveyQuestionForm
                                     ->label('Urutan')
                                     ->numeric()
                                     ->default(fn ($get, $livewire) => 
-                                        ($livewire->data['options'] ?? []) ? 
+                                        is_array($livewire->data['options'] ?? null) ? 
                                         count($livewire->data['options']) + 1 : 1
                                     )
                                     ->minValue(1)
