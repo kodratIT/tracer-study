@@ -18,15 +18,18 @@ class EmploymentHistory extends Model
         'employer_id',
         'job_title',
         'job_level',
-        'start_date',
-        'end_date',
-        'salary_range',
         'contract_type',
+        'employment_status',
+        'is_active',
+        'job_description',
+        'company_phone',
+        'institution_name',
+        'study_level',
+        'major',
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     protected $dates = [

@@ -93,6 +93,14 @@ class Alumni extends Authenticatable
     }
 
     /**
+     * Relationship with program
+     */
+    public function program()
+    {
+        return $this->belongsTo(\Modules\Education\Models\Program::class, 'program_id', 'program_id');
+    }
+
+    /**
      * Relationship with contact methods
      */
     public function contactMethods()

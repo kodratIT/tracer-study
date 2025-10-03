@@ -31,7 +31,7 @@ class AuthController extends Controller
 
         if (Auth::guard('alumni')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('alumni.dashboard'));
+            return redirect()->route('alumni.dashboard');
         }
 
         throw ValidationException::withMessages([
@@ -82,13 +82,55 @@ class AuthController extends Controller
     public function dashboard()
     {
         $alumni = Auth::guard('alumni')->user();
-        return view('alumni.dashboard', compact('alumni'));
+        
+        // Load program relation if exists
+        if ($alumni->program_id) {
+            $alumni->load('program.department');
+        }
+        
+        // Load address relation if exists
+        if ($alumni->address_id) {
+            $alumni->load('address');
+        }
+        
+        // Check employment status
+        $hasEmployment = \Modules\Employment\Models\EmploymentHistory::where('alumni_id', $alumni->alumni_id)->exists();
+        
+        // Get active survey session
+        $activeSurveySession = \Modules\Survey\Models\TracerStudySession::active()
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->with(['surveyResponses' => function($query) use ($alumni) {
+                $query->where('alumni_id', $alumni->alumni_id);
+            }])
+            ->first();
+        
+        $surveyResponse = $activeSurveySession ? $activeSurveySession->surveyResponses->first() : null;
+        
+        // Check questionnaire status
+        $hasCompletedSurvey = \Modules\Survey\Models\SurveyResponse::where('alumni_id', $alumni->alumni_id)
+            ->where('completion_status', 'completed')
+            ->exists();
+        
+        return view('alumni.dashboard', compact('alumni', 'hasEmployment', 'hasCompletedSurvey', 'activeSurveySession', 'surveyResponse'));
     }
 
     public function showProfile()
     {
         $alumni = Auth::guard('alumni')->user();
-        return view('alumni.profile', compact('alumni'));
+        
+        // Load address relation if exists
+        if ($alumni->address_id) {
+            $alumni->load('address');
+        }
+        
+        // Get all active programs with department info
+        $programs = \Modules\Education\Models\Program::active()
+            ->with('department')
+            ->orderBy('program_name')
+            ->get();
+        
+        return view('alumni.profile', compact('alumni', 'programs'));
     }
 
     public function updateProfile(Request $request)
@@ -100,10 +142,39 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:alumni,email,' . $alumni->alumni_id . ',alumni_id',
             'phone' => 'nullable|string|max:20',
             'gender' => 'nullable|in:male,female',
-            'birth_date' => 'nullable|date',
+            'birth_date' => 'nullable|date|before:today',
             'gpa' => 'nullable|numeric|min:0|max:4',
-            'address' => 'nullable|string|max:500',
+            'program_id' => 'nullable|integer',
+            'street' => 'required_with:city,province|nullable|string|max:255',
+            'city' => 'required_with:street,province|nullable|string|max:100',
+            'district' => 'nullable|string|max:100',
+            'village' => 'nullable|string|max:100',
+            'province' => 'required_with:street,city|nullable|string|max:100',
+            'postal_code' => 'nullable|string|max:10',
+            'country' => 'nullable|string|max:100',
         ]);
+
+        // Handle address creation/update
+        if ($request->filled(['street', 'city', 'province'])) {
+            $addressData = [
+                'street' => $request->street,
+                'city' => $request->city,
+                'district' => $request->district,
+                'village' => $request->village,
+                'province' => $request->province,
+                'postal_code' => $request->postal_code,
+                'country' => $request->country ?? 'Indonesia',
+            ];
+
+            if ($alumni->address_id) {
+                // Update existing address
+                $alumni->address()->update($addressData);
+            } else {
+                // Create new address
+                $address = \Modules\Alumni\Models\Address::create($addressData);
+                $alumni->address_id = $address->address_id;
+            }
+        }
 
         $alumni->update([
             'name' => $request->name,
@@ -112,8 +183,9 @@ class AuthController extends Controller
             'gender' => $request->gender,
             'birth_date' => $request->birth_date,
             'gpa' => $request->gpa,
+            'program_id' => $request->program_id,
         ]);
 
-        return redirect()->route('alumni.profile')->with('success', 'Profile updated successfully!');
+        return redirect()->route('alumni.profile')->with('success', 'Profil berhasil diperbarui!');
     }
 }

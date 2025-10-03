@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo(function () {
+        $middleware->redirectGuestsTo(function ($request) {
+            // Redirect to appropriate login page based on the path
+            if ($request->is('alumni') || $request->is('alumni/*')) {
+                return route('alumni.login');
+            }
             return route('filament.admin.auth.login');
         });
         
@@ -21,10 +25,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'alumni' => \App\Http\Middleware\EnsureUserIsAlumni::class,
             'redirect.role' => \App\Http\Middleware\RedirectIfNotAlumni::class,
             'filament.admin' => \App\Http\Middleware\FilamentAdminAuth::class,
-        ]);
-        
-        $middleware->web(append: [
-            \App\Http\Middleware\RedirectIfNotAlumni::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
