@@ -59,7 +59,7 @@
         <form id="survey-form" method="POST" action="{{ route('alumni.survey.review', $response) }}">
             @csrf
             
-            <div class="space-y-6">
+            <div class="space-y-8">
                 @foreach($questions as $index => $question)
                     @php
                         $answer = $answers->get($question->question_id);

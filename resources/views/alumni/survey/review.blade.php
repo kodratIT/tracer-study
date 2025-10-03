@@ -79,7 +79,7 @@
         @endif
 
         <!-- Answers Review -->
-        <div class="space-y-4">
+        <div class="space-y-6">
             @foreach($questions as $index => $question)
                 @php
                     $answer = $answers->get($question->question_id);
