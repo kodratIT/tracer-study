@@ -240,12 +240,15 @@ class SurveyController extends Controller
             abort(403);
         }
         
+        // Check if there are any answers
+        $answerCount = Answer::where('response_id', $response->response_id)->count();
+        
         // Update metadata
         $metadata = $response->metadata ?? [];
         $metadata['last_saved_at'] = now()->toDateTimeString();
         $response->update([
             'metadata' => $metadata,
-            'completion_status' => 'partial',
+            'completion_status' => $answerCount > 0 ? 'draft' : 'draft',
         ]);
         
         return redirect()->route('alumni.survey.index')

@@ -97,13 +97,23 @@
                                         </svg>
                                         Sedang Dikerjakan
                                     </span>
+                                    @if($response && $response->metadata && isset($response->metadata['last_saved_at']))
+                                        <span class="text-xs text-gray-500">
+                                            • Terakhir disimpan {{ \Carbon\Carbon::parse($response->metadata['last_saved_at'])->diffForHumans() }}
+                                        </span>
+                                    @endif
                                 @elseif($status === 'draft')
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
                                         </svg>
                                         Draft Tersimpan
                                     </span>
+                                    @if($response && $response->metadata && isset($response->metadata['last_saved_at']))
+                                        <span class="text-xs text-gray-500">
+                                            • Disimpan {{ \Carbon\Carbon::parse($response->metadata['last_saved_at'])->diffForHumans() }}
+                                        </span>
+                                    @endif
                                 @else
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
