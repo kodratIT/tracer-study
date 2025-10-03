@@ -6,11 +6,11 @@
     $currentRating = old('answer_' . $question->question_id, $answer?->rating_value);
 @endphp
 
-<div class="max-w-xl mx-auto">
+<div class="max-w-2xl mx-auto py-4">
     <!-- Rating Options -->
-    <div class="flex items-center justify-center gap-2 mb-4">
+    <div class="flex items-center justify-center gap-4 mb-6">
         @for($i = $minValue; $i <= $maxValue; $i += $step)
-            <label class="flex flex-col items-center cursor-pointer group flex-1 max-w-[80px]">
+            <label class="flex flex-col items-center cursor-pointer group flex-1 max-w-[100px]">
                 <input 
                     type="radio" 
                     name="answer_{{ $question->question_id }}"
@@ -19,15 +19,15 @@
                     class="sr-only peer"
                     @if($question->is_required) required @endif
                 />
-                <div class="w-full aspect-square flex items-center justify-center rounded-lg border-2 border-gray-300 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white group-hover:border-blue-500 group-hover:bg-blue-50 peer-checked:group-hover:bg-blue-700 transition-all">
-                    <span class="text-xl font-bold">{{ $i }}</span>
+                <div class="w-full aspect-square flex items-center justify-center rounded-lg border-2 border-gray-300 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white group-hover:border-blue-500 group-hover:bg-blue-50 peer-checked:group-hover:bg-blue-700 transition-all shadow-sm">
+                    <span class="text-2xl font-bold">{{ $i }}</span>
                 </div>
                 @if($i == $minValue)
-                    <span class="mt-1.5 text-xs text-gray-600 font-medium text-center">Rendah</span>
+                    <span class="mt-2 text-xs text-gray-600 font-medium text-center">Rendah</span>
                 @elseif($i == $maxValue)
-                    <span class="mt-1.5 text-xs text-gray-600 font-medium text-center">Tinggi</span>
+                    <span class="mt-2 text-xs text-gray-600 font-medium text-center">Tinggi</span>
                 @else
-                    <span class="mt-1.5 text-xs text-gray-400 font-medium">{{ $i }}</span>
+                    <span class="mt-2 text-xs text-gray-400 font-medium">{{ $i }}</span>
                 @endif
             </label>
         @endfor
