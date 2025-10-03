@@ -3,8 +3,9 @@
 @section('title', 'Survey Berhasil Dikirim')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-2xl w-full">
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12">
+    <div class="max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mx-auto">
         
         <!-- Success Card -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
@@ -148,6 +149,7 @@
             </div>
         </div>
 
+        </div>
     </div>
 </div>
 @endsection
