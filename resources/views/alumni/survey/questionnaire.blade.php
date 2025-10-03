@@ -56,9 +56,7 @@
         @endif
 
         <!-- Questions Form -->
-        <form id="survey-form" method="POST" action="{{ route('alumni.survey.review', $response) }}">
-            @csrf
-            
+        <div id="survey-form">
             <div class="space-y-8">
                 @foreach($questions as $index => $question)
                     @php
@@ -134,18 +132,16 @@
                         </button>
                     </form>
                     
-                    <button type="submit" id="continue-btn" class="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                        <span class="flex items-center gap-2">
-                            Review Jawaban
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
-                        </span>
-                    </button>
+                    <a href="{{ route('alumni.survey.review', $response) }}" id="continue-btn" class="inline-flex items-center gap-2 px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                        Review Jawaban
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
 
-        </form>
+        </div>
 
     </div>
 </div>
