@@ -162,7 +162,7 @@
                 @if($missingRequired->isEmpty())
                     <form action="{{ route('alumni.survey.submit', $response) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengirim survey ini? Setelah dikirim, Anda tidak dapat mengubah jawaban.')">
                         @csrf
-                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-xl">
+                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
