@@ -210,7 +210,7 @@
                 </div>
             </div>
         </div>
-        <div class="bg-gray-50 px-6 py-3 flex justify-end gap-2 rounded-b-lg">
+        <div class="bg-gray-50 px-6 py-3 flex justify-end gap-3 rounded-b-lg">
             <button type="button" onclick="closeSubmitModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 Batal
             </button>
