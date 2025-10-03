@@ -4,15 +4,16 @@
     $maxDate = $question->validation_rules['max_date'] ?? null;
 @endphp
 
-<input 
-    type="date" 
-    name="answer_{{ $question->question_id }}"
-    value="{{ old('answer_' . $question->question_id, $answer?->answer_text) }}"
-    class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-    @if($question->is_required) required @endif
-    @if($minDate) min="{{ $minDate }}" @endif
-    @if($maxDate) max="{{ $maxDate }}" @endif
-/>
+<div class="max-w-sm">
+    <input 
+        type="date" 
+        name="answer_{{ $question->question_id }}"
+        value="{{ old('answer_' . $question->question_id, $answer?->answer_text) }}"
+        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900"
+        @if($question->is_required) required @endif
+        @if($minDate) min="{{ $minDate }}" @endif
+        @if($maxDate) max="{{ $maxDate }}" @endif
+    />
 
 @if($minDate || $maxDate)
     <p class="mt-2 text-sm text-gray-500">

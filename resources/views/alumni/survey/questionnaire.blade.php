@@ -66,44 +66,50 @@
                         $questionNumber = $index + 1;
                     @endphp
                     
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 question-card" data-question-id="{{ $question->question_id }}">
-                        <!-- Question Header -->
-                        <div class="mb-4">
-                            <div class="flex items-start justify-between gap-4 mb-3">
-                                <div class="flex items-center gap-3">
-                                    <span class="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold flex-shrink-0">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden question-card" data-question-id="{{ $question->question_id }}">
+                        <!-- Question Header with Background -->
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex items-start gap-3 flex-1">
+                                    <span class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-lg text-sm font-semibold flex-shrink-0 mt-0.5">
                                         {{ $questionNumber }}
                                     </span>
-                                    @if($question->is_required)
-                                        <span class="px-2.5 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded">
-                                            Wajib
-                                        </span>
-                                    @endif
+                                    <div class="flex-1">
+                                        <h3 class="text-base font-medium text-gray-900 leading-relaxed">
+                                            {{ $question->question_text }}
+                                            @if($question->is_required)
+                                                <span class="text-red-500 ml-1">*</span>
+                                            @endif
+                                        </h3>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            @if($question->is_required)
+                                                <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded">
+                                                    Wajib Dijawab
+                                                </span>
+                                            @endif
+                                            <span class="text-xs text-gray-500">
+                                                {{ ucfirst($question->question_type) }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div id="status-{{ $question->question_id }}" class="flex items-center gap-1.5 text-sm">
+                                <div id="status-{{ $question->question_id }}" class="flex items-center gap-1.5 text-sm flex-shrink-0">
                                     @if($answer && !$answer->is_empty)
                                         <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                         </svg>
-                                        <span class="text-green-700">Terjawab</span>
+                                        <span class="text-green-700 font-medium">✓</span>
                                     @else
                                         <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                                         </svg>
-                                        <span class="text-gray-500">Belum dijawab</span>
                                     @endif
                                 </div>
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900">
-                                {{ $question->question_text }}
-                                @if($question->is_required)
-                                    <span class="text-red-500">*</span>
-                                @endif
-                            </h3>
                         </div>
 
-                        <!-- Question Input -->
-                        <div class="mt-4">
+                        <!-- Answer Area -->
+                        <div class="p-6 bg-white">
                             @includeFirst([
                                 "alumni.survey.partials.question-types.{$question->question_type}",
                                 'alumni.survey.partials.question-types.text'
