@@ -190,7 +190,7 @@
 </div>
 
 <!-- Submit Confirmation Modal -->
-<div id="submit-modal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div id="submit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <!-- Modal panel -->
     <div class="bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-md">
         <div class="p-6">
