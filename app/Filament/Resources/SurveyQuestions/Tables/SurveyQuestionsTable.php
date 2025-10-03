@@ -89,6 +89,7 @@ class SurveyQuestionsTable
                     ->label('Validasi')
                     ->formatStateUsing(function ($state) {
                         if (!$state || empty($state)) return 'Tidak ada';
+                        if (!is_array($state) && !is_countable($state)) return 'Tidak ada';
                         return count($state) . ' aturan';
                     })
                     ->color(fn ($state) => !empty($state) ? 'success' : 'gray')
