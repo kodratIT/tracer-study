@@ -13,8 +13,11 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class SurveyQuestionResource extends Resource
+    use HasPageShield;
+    
 {
     protected static ?string $model = SurveyQuestion::class;
 

@@ -11,8 +11,11 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class SurveyResponseResource extends Resource
+    use HasPageShield;
+    
 {
     protected static ?string $model = SurveyResponse::class;
 

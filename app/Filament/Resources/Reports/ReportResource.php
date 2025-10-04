@@ -12,9 +12,12 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ReportResource extends Resource
 {
+    use HasPageShield;
+    
     protected static ?string $model = Report::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
