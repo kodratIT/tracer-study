@@ -18,16 +18,16 @@ class QuickActionsWidget extends Widget
             [
                 'label' => 'Kelola Alumni',
                 'icon' => 'heroicon-o-academic-cap',
-                'url' => route('filament.admin.resources.alumni.index'),
+                'url' => route('filament.admin.resources.alumnis.index'),
                 'color' => 'primary',
                 'description' => 'Lihat dan kelola data alumni',
             ],
             [
-                'label' => 'Survey Responses',
-                'icon' => 'heroicon-o-clipboard-document-list',
-                'url' => route('filament.admin.resources.survey-responses.index'),
+                'label' => 'Data Pekerjaan',
+                'icon' => 'heroicon-o-briefcase',
+                'url' => route('filament.admin.resources.employments.index'),
                 'color' => 'success',
-                'description' => 'Monitor respons survei',
+                'description' => 'Riwayat pekerjaan alumni',
             ],
             [
                 'label' => 'Buat Laporan',
