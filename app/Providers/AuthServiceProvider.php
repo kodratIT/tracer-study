@@ -25,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
         \Modules\Survey\Models\TracerStudySession::class => \App\Policies\TracerStudySessionPolicy::class,
         \Modules\Reports\Models\Report::class => \App\Policies\ReportPolicy::class,
         \App\Models\User::class => \App\Policies\UserPolicy::class,
+        \Spatie\Permission\Models\Role::class => \App\Policies\RolePolicy::class,
     ];
 
     /**

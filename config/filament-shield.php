@@ -65,7 +65,7 @@ return [
     'super_admin' => [
         'enabled' => true,
         'name' => 'super_admin',
-        'define_via_gate' => true,
+        'define_via_gate' => false,
         'intercept_gate' => 'before',
     ],
 
@@ -99,9 +99,9 @@ return [
     */
 
     'permissions' => [
-        'separator' => '_',
-        'case' => 'snake',
-        'generate' => false,
+        'separator' => ':',
+        'case' => 'pascal',
+        'generate' => true,
     ],
 
     /*
