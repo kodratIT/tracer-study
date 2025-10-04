@@ -126,23 +126,10 @@ class AlumniForm
                     ->schema([
                         Repeater::make('employmentHistories')
                             ->relationship()
-                            ->label('Tambah Pekerjaan')
+                            ->label('Riwayat Pekerjaan')
                             ->schema([
-                                TextInput::make('job_title')
-                                    ->label('Jabatan')
-                                    ->placeholder('Software Engineer')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->columnSpan(2),
-                                    
-                                TextInput::make('company_name')
-                                    ->label('Nama Perusahaan')
-                                    ->placeholder('PT. Contoh Indonesia')
-                                    ->maxLength(255)
-                                    ->columnSpan(2),
-                                    
                                 Select::make('employment_status')
-                                    ->label('Status')
+                                    ->label('Status Kegiatan')
                                     ->options([
                                         'employed' => 'Bekerja',
                                         'unemployed' => 'Tidak Bekerja',
@@ -151,6 +138,71 @@ class AlumniForm
                                     ])
                                     ->required()
                                     ->default('employed')
+                                    ->reactive()
+                                    ->columnSpan(2),
+                                    
+                                Select::make('is_active')
+                                    ->label('Status Aktif')
+                                    ->boolean()
+                                    ->options([
+                                        1 => 'Aktif (Saat Ini)',
+                                        0 => 'Tidak Aktif',
+                                    ])
+                                    ->default(1)
+                                    ->helperText('Tandai jika ini adalah pekerjaan/kegiatan saat ini')
+                                    ->columnSpan(2),
+                                    
+                                // For Employed/Entrepreneur
+                                TextInput::make('job_title')
+                                    ->label('Jabatan/Posisi')
+                                    ->placeholder('Software Engineer')
+                                    ->maxLength(255)
+                                    ->visible(fn ($get) => in_array($get('employment_status'), ['employed', 'entrepreneur']))
+                                    ->required(fn ($get) => in_array($get('employment_status'), ['employed', 'entrepreneur']))
+                                    ->columnSpan(2),
+                                    
+                                Select::make('employer_id')
+                                    ->label('Perusahaan')
+                                    ->relationship('employer', 'employer_name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        TextInput::make('employer_name')
+                                            ->label('Nama Perusahaan')
+                                            ->required()
+                                            ->maxLength(255),
+                                            
+                                        TextInput::make('industry_type')
+                                            ->label('Jenis Industri')
+                                            ->placeholder('Teknologi, Pendidikan, dll')
+                                            ->required()
+                                            ->maxLength(100),
+                                            
+                                        TextInput::make('website')
+                                            ->label('Website')
+                                            ->url()
+                                            ->maxLength(255),
+                                    ])
+                                    ->visible(fn ($get) => in_array($get('employment_status'), ['employed', 'entrepreneur']))
+                                    ->placeholder('Pilih atau buat perusahaan baru')
+                                    ->columnSpan(2),
+                                    
+                                Select::make('job_level')
+                                    ->label('Level Jabatan')
+                                    ->options([
+                                        'entry' => 'Entry Level',
+                                        'junior' => 'Junior',
+                                        'mid' => 'Mid Level',
+                                        'senior' => 'Senior',
+                                        'lead' => 'Lead/Team Leader',
+                                        'supervisor' => 'Supervisor',
+                                        'manager' => 'Manager',
+                                        'director' => 'Director',
+                                        'vp' => 'Vice President',
+                                        'ceo' => 'CEO/Founder',
+                                    ])
+                                    ->visible(fn ($get) => $get('employment_status') === 'employed')
+                                    ->required(fn ($get) => $get('employment_status') === 'employed')
                                     ->columnSpan(2),
                                     
                                 Select::make('contract_type')
@@ -162,16 +214,55 @@ class AlumniForm
                                         'freelance' => 'Freelance',
                                         'internship' => 'Magang',
                                     ])
-                                    ->placeholder('Pilih jenis kontrak')
+                                    ->visible(fn ($get) => $get('employment_status') === 'employed')
+                                    ->required(fn ($get) => $get('employment_status') === 'employed')
                                     ->columnSpan(2),
+                                    
+                                Textarea::make('job_description')
+                                    ->label('Deskripsi Pekerjaan')
+                                    ->placeholder('Tugas dan tanggung jawab...')
+                                    ->rows(3)
+                                    ->visible(fn ($get) => in_array($get('employment_status'), ['employed', 'entrepreneur']))
+                                    ->columnSpanFull(),
+                                    
+                                // For Studying
+                                TextInput::make('institution_name')
+                                    ->label('Nama Institusi')
+                                    ->placeholder('Universitas ABC')
+                                    ->maxLength(255)
+                                    ->visible(fn ($get) => $get('employment_status') === 'studying')
+                                    ->required(fn ($get) => $get('employment_status') === 'studying')
+                                    ->columnSpan(2),
+                                    
+                                TextInput::make('study_level')
+                                    ->label('Jenjang Pendidikan')
+                                    ->placeholder('S2, S3, dll')
+                                    ->maxLength(100)
+                                    ->visible(fn ($get) => $get('employment_status') === 'studying')
+                                    ->required(fn ($get) => $get('employment_status') === 'studying')
+                                    ->columnSpan(1),
+                                    
+                                TextInput::make('major')
+                                    ->label('Program Studi')
+                                    ->placeholder('Teknik Informatika')
+                                    ->maxLength(255)
+                                    ->visible(fn ($get) => $get('employment_status') === 'studying')
+                                    ->required(fn ($get) => $get('employment_status') === 'studying')
+                                    ->columnSpan(1),
                             ])
                             ->columns(4)
                             ->defaultItems(0)
                             ->itemLabel(fn (array $state): ?string => 
-                                (!empty($state['job_title']) ? $state['job_title'] : 'Pekerjaan Baru') .
-                                (!empty($state['company_name']) ? ' - ' . $state['company_name'] : '')
+                                match($state['employment_status'] ?? 'employed') {
+                                    'employed' => ($state['job_title'] ?? 'Pekerjaan') . 
+                                                  (isset($state['is_active']) && $state['is_active'] ? ' (Aktif)' : ''),
+                                    'studying' => 'Studi: ' . ($state['institution_name'] ?? 'Institusi'),
+                                    'entrepreneur' => 'Wiraswasta: ' . ($state['job_title'] ?? 'Usaha'),
+                                    'unemployed' => 'Tidak Bekerja',
+                                    default => 'Data Pekerjaan'
+                                }
                             )
-                            ->addActionLabel('+ Tambah Pekerjaan')
+                            ->addActionLabel('+ Tambah Data Pekerjaan/Kegiatan')
                             ->collapsible()
                             ->columnSpanFull(),
                     ])
