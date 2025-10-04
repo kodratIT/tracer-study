@@ -9,27 +9,24 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            \Filament\Widgets\AccountWidget::class,
+            // Main Stats - Always visible
+            \App\Filament\Widgets\TracerStudyOverviewWidget::class,
             
-            // Alumni and Survey Analytics
-            \Modules\Reports\Filament\Widgets\AlumniSurveyByYearChart::class,
-            \Modules\Reports\Filament\Widgets\EmploymentStatusChart::class,
-            
-            // Employment and Career Analytics  
-            \Modules\Reports\Filament\Widgets\SalaryDistributionChart::class,
-            \Modules\Reports\Filament\Widgets\SkillDistributionChart::class,
-            
-            // Additional widgets from resources
-            \App\Filament\Resources\Reports\Widgets\ReportStatsWidget::class,
+            // Survey Response Stats
             \App\Filament\Resources\SurveyResponses\Widgets\SurveyResponseStatsWidget::class,
             
-            \Filament\Widgets\FilamentInfoWidget::class,
+            // Alumni & Employment Summary
+            \App\Filament\Widgets\AlumniEmploymentStatsWidget::class,
+            
+            // Quick Actions
+            \App\Filament\Widgets\QuickActionsWidget::class,
         ];
     }
 
     public function getColumns(): int | array
     {
         return [
+            'sm' => 1,
             'md' => 2,
             'xl' => 3,
         ];

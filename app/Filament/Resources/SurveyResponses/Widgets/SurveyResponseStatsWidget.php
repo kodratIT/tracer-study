@@ -8,47 +8,47 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class SurveyResponseStatsWidget extends StatsOverviewWidget
 {
+    protected static ?int $sort = 2;
+
     protected function getStats(): array
     {
         $totalResponses = SurveyResponse::count();
         $completedResponses = SurveyResponse::completed()->count();
         $partialResponses = SurveyResponse::partial()->count();
-        $overdueResponses = SurveyResponse::overdue()->count();
         $activeResponses = SurveyResponse::inActiveSessions()->count();
 
         $completionRate = $totalResponses > 0 ? round(($completedResponses / $totalResponses) * 100, 1) : 0;
 
         return [
-            Stat::make('Total Respons', number_format($totalResponses))
-                ->description('Semua respons yang ada')
-                ->descriptionIcon('heroicon-m-clipboard-document-list')
-                ->color('primary'),
-
-            Stat::make('Selesai', number_format($completedResponses))
-                ->description("Tingkat penyelesaian: {$completionRate}%")
+            Stat::make('Survei Selesai', number_format($completedResponses))
+                ->description("Completion rate: {$completionRate}%")
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->chart([$partialResponses, $completedResponses]),
+                ->chart($this->getCompletionTrendData()),
 
             Stat::make('Dalam Proses', number_format($partialResponses))
-                ->description('Respons sebagian atau draft')
+                ->description('Belum diselesaikan')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning'),
 
-            Stat::make('Aktif', number_format($activeResponses))
-                ->description('Dalam sesi aktif')
-                ->descriptionIcon('heroicon-m-play')
+            Stat::make('Sedang Aktif', number_format($activeResponses))
+                ->description('Sedang mengisi survei')
+                ->descriptionIcon('heroicon-m-arrow-path')
                 ->color('info'),
-
-            Stat::make('Terlambat', number_format($overdueResponses))
-                ->description('Sesi berakhir, belum selesai')
-                ->descriptionIcon('heroicon-m-exclamation-triangle')
-                ->color('danger'),
         ];
     }
 
-    protected function getColumns(): int
+    protected function getCompletionTrendData(): array
     {
-        return 5;
+        // Get last 7 days completion count
+        $data = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->startOfDay();
+            $count = SurveyResponse::completed()
+                ->whereDate('updated_at', $date)
+                ->count();
+            $data[] = $count;
+        }
+        return $data;
     }
 }
