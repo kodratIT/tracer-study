@@ -41,6 +41,16 @@ class AlumnisTable
                     ->description(fn ($record) => $record->email)
                     ->wrap(),
                     
+                // Program Studi
+                TextColumn::make('program.program_name')
+                    ->label('Program Studi')
+                    ->searchable()
+                    ->sortable()
+                    ->wrap()
+                    ->description(fn ($record) => $record->program?->department?->department_name ?? '-')
+                    ->icon('heroicon-m-academic-cap')
+                    ->toggleable(),
+                    
                 // Academic Information
                 TextColumn::make('graduation_year')
                     ->label('Lulus')
@@ -83,6 +93,68 @@ class AlumnisTable
                     ->searchable()
                     ->copyable()
                     ->icon('heroicon-m-phone')
+                    ->toggleable(),
+                    
+                // Employment Status
+                TextColumn::make('employment_status')
+                    ->label('Status Pekerjaan')
+                    ->badge()
+                    ->state(function ($record) {
+                        $hasEmployment = \Modules\Employment\Models\EmploymentHistory::where('alumni_id', $record->alumni_id)->exists();
+                        return $hasEmployment ? 'Terisi' : 'Belum Ada';
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'Terisi' => 'success',
+                        default => 'gray',
+                    })
+                    ->icon(fn (string $state): string => match ($state) {
+                        'Terisi' => 'heroicon-m-check-circle',
+                        default => 'heroicon-m-minus-circle',
+                    })
+                    ->alignCenter()
+                    ->toggleable(),
+                    
+                // Survey Status
+                TextColumn::make('survey_status')
+                    ->label('Status Survey')
+                    ->badge()
+                    ->state(function ($record) {
+                        $activeSurveySession = \Modules\Survey\Models\TracerStudySession::active()->first();
+                        if (!$activeSurveySession) {
+                            return 'Tidak Ada';
+                        }
+                        
+                        $surveyResponse = \Modules\Survey\Models\SurveyResponse::where('alumni_id', $record->alumni_id)
+                            ->where('session_id', $activeSurveySession->session_id)
+                            ->first();
+                            
+                        if (!$surveyResponse) {
+                            return 'Belum Mulai';
+                        }
+                        
+                        return match ($surveyResponse->completion_status) {
+                            'completed' => 'Selesai',
+                            'partial' => 'Dalam Proses',
+                            default => 'Draft',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'Selesai' => 'success',
+                        'Dalam Proses' => 'warning',
+                        'Draft' => 'info',
+                        'Belum Mulai' => 'gray',
+                        'Tidak Ada' => 'gray',
+                        default => 'gray',
+                    })
+                    ->icon(fn (string $state): string => match ($state) {
+                        'Selesai' => 'heroicon-m-check-badge',
+                        'Dalam Proses' => 'heroicon-m-clock',
+                        'Draft' => 'heroicon-m-pencil-square',
+                        'Belum Mulai' => 'heroicon-m-minus-circle',
+                        'Tidak Ada' => 'heroicon-m-x-circle',
+                        default => 'heroicon-m-question-mark-circle',
+                    })
+                    ->alignCenter()
                     ->toggleable(),
                     
                 // Address Information
@@ -156,6 +228,36 @@ class AlumnisTable
                         'female' => 'Perempuan',
                     ])
                     ->placeholder('Semua Gender'),
+                    
+                // Program Studi Filter
+                SelectFilter::make('program_id')
+                    ->label('Program Studi')
+                    ->relationship('program', 'program_name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Semua Program'),
+                    
+                // Employment Status Filter
+                SelectFilter::make('employment_status')
+                    ->label('Status Pekerjaan')
+                    ->options([
+                        'has_employment' => 'Terisi',
+                        'no_employment' => 'Belum Ada',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (!isset($data['value'])) {
+                            return $query;
+                        }
+                        
+                        return $query->when(
+                            $data['value'] === 'has_employment',
+                            fn (Builder $query): Builder => $query->whereHas('employmentHistories'),
+                        )->when(
+                            $data['value'] === 'no_employment',
+                            fn (Builder $query): Builder => $query->whereDoesntHave('employmentHistories'),
+                        );
+                    })
+                    ->placeholder('Semua Status'),
                     
                 // GPA Range Filter
                 Filter::make('gpa')
