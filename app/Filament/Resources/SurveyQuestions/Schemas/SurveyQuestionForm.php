@@ -191,9 +191,11 @@ class SurveyQuestionForm
                                     case SurveyQuestion::TYPE_RADIO:
                                         $options = $record?->options ?? collect($get('options') ?? []);
                                         if ($options->isNotEmpty()) {
-                                            foreach ($options as $index => $option) {
-                                                $optionText = is_array($option) ? ($option['option_text'] ?? "Pilihan " . ($index + 1)) : $option->option_text;
+                                            $optionIndex = 1;
+                                            foreach ($options as $option) {
+                                                $optionText = is_array($option) ? ($option['option_text'] ?? "Pilihan " . $optionIndex) : $option->option_text;
                                                 $preview .= "<label style='display: block; margin: 4px 0;'><input type='radio' name='preview_radio' disabled> {$optionText}</label>";
+                                                $optionIndex++;
                                             }
                                         } else {
                                             $preview .= "<div style='color: #9ca3af;'>Pilihan akan tampil di sini setelah ditambahkan...</div>";
@@ -203,9 +205,11 @@ class SurveyQuestionForm
                                     case SurveyQuestion::TYPE_CHECKBOX:
                                         $options = $record?->options ?? collect($get('options') ?? []);
                                         if ($options->isNotEmpty()) {
-                                            foreach ($options as $index => $option) {
-                                                $optionText = is_array($option) ? ($option['option_text'] ?? "Pilihan " . ($index + 1)) : $option->option_text;
+                                            $optionIndex = 1;
+                                            foreach ($options as $option) {
+                                                $optionText = is_array($option) ? ($option['option_text'] ?? "Pilihan " . $optionIndex) : $option->option_text;
                                                 $preview .= "<label style='display: block; margin: 4px 0;'><input type='checkbox' disabled> {$optionText}</label>";
+                                                $optionIndex++;
                                             }
                                         } else {
                                             $preview .= "<div style='color: #9ca3af;'>Pilihan akan tampil di sini setelah ditambahkan...</div>";
@@ -217,9 +221,11 @@ class SurveyQuestionForm
                                         $preview .= "<select style='width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;' disabled>";
                                         $preview .= "<option>Pilih salah satu...</option>";
                                         if ($options->isNotEmpty()) {
-                                            foreach ($options as $index => $option) {
-                                                $optionText = is_array($option) ? ($option['option_text'] ?? "Pilihan " . ($index + 1)) : $option->option_text;
+                                            $optionIndex = 1;
+                                            foreach ($options as $option) {
+                                                $optionText = is_array($option) ? ($option['option_text'] ?? "Pilihan " . $optionIndex) : $option->option_text;
                                                 $preview .= "<option>{$optionText}</option>";
+                                                $optionIndex++;
                                             }
                                         }
                                         $preview .= "</select>";
