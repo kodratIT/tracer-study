@@ -163,16 +163,10 @@ return [
     'resources' => [
         'subject' => 'model',
         'manage' => [
-            \BezhanSalleh\FilamentShield\Resources\Roles\RoleResource::class => [
-                'viewAny',
-                'view',
-                'create',
-                'update',
-                'delete',
-            ],
+            // Empty - let policies handle this
         ],
         'exclude' => [
-            //
+            // Don't exclude any resources from permission management
         ],
     ],
 
@@ -191,6 +185,7 @@ return [
         'subject' => 'class',
         'prefix' => 'view',
         'exclude' => [
+            // Dashboard is excluded from permission checks
             \Filament\Pages\Dashboard::class,
         ],
     ],
@@ -240,9 +235,9 @@ return [
     */
 
     'discovery' => [
-        'discover_all_resources' => false,
-        'discover_all_widgets' => false,
-        'discover_all_pages' => false,
+        'discover_all_resources' => true,
+        'discover_all_widgets' => true,
+        'discover_all_pages' => true,
     ],
 
     /*
