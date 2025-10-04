@@ -4,8 +4,9 @@ namespace App\Filament\Resources\Reports\Pages;
 
 use App\Filament\Resources\Reports\ReportResource;
 use Filament\Resources\Pages\CreateRecord;
-use Modules\Reports\Services\BanPtReportService;
+use App\Services\Reports\ReportGeneratorService;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class CreateReport extends CreateRecord
 {
@@ -13,7 +14,12 @@ class CreateReport extends CreateRecord
 
     public function getTitle(): string
     {
-        return 'Buat Laporan BAN-PT';
+        return '📊 Generate Laporan Tracer Study';
+    }
+
+    public function getHeading(): string
+    {
+        return '📊 Generate Laporan Tracer Study';
     }
 
     protected function getRedirectUrl(): string
@@ -23,53 +29,63 @@ class CreateReport extends CreateRecord
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'Laporan berhasil dibuat dan akan segera diproses';
+        return 'Laporan berhasil dibuat!';
+    }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Laporan berhasil dibuat!')
+            ->body('Laporan sedang di-generate. Refresh halaman untuk melihat progress.')
+            ->icon('heroicon-o-check-circle')
+            ->iconColor('success');
     }
 
     protected function afterCreate(): void
     {
-        // Set auto-expiration if enabled
-        if ($this->data['parameters']['auto_expire'] ?? true) {
-            $this->record->setExpiration(30);
-        }
-        
-        // Queue report generation for background processing
+        // Generate report in background
         dispatch(function () {
-            $service = app(BanPtReportService::class);
+            $service = new ReportGeneratorService();
             try {
-                $service->generateReport($this->record);
-            } catch (\Exception $e) {
-                \Log::error('Report generation failed', [
+                Log::info('Starting report generation', [
                     'report_id' => $this->record->report_id,
-                    'error' => $e->getMessage()
+                    'type' => $this->record->report_type,
                 ]);
-                
-                $this->record->markAsFailed($e->getMessage());
+
+                $success = $service->generate($this->record);
+
+                if ($success) {
+                    Log::info('Report generated successfully', [
+                        'report_id' => $this->record->report_id,
+                        'file_path' => $this->record->file_path,
+                    ]);
+                } else {
+                    Log::error('Report generation returned false', [
+                        'report_id' => $this->record->report_id,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Report generation failed', [
+                    'report_id' => $this->record->report_id,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
             }
         })->afterResponse();
-
-        Notification::make()
-            ->title('Laporan berhasil dijadwalkan')
-            ->body('Laporan Anda telah dijadwalkan untuk dibuat di latar belakang. Refresh halaman untuk melihat progress.')
-            ->success()
-            ->send();
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // Generate auto title if not provided
-        if (empty($data['title'])) {
-            $type = \Modules\Reports\Models\Report::REPORT_TYPES[$data['report_type']] ?? $data['report_type'];
-            $data['title'] = $type . ' - ' . now()->format('d/m/Y H:i');
+        // Ensure parameters is array
+        if (!isset($data['parameters']) || !is_array($data['parameters'])) {
+            $data['parameters'] = [];
         }
 
-        // Set default parameters
-        $data['parameters'] = array_merge([
-            'include_charts' => true,
-            'include_raw_data' => false,
-            'auto_expire' => true,
-        ], $data['parameters'] ?? []);
+        // Set default status
+        $data['status'] = 'pending';
 
         return $data;
     }
 }
+
