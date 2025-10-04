@@ -167,18 +167,29 @@ class SurveyController extends Controller
             return response()->json(['success' => false, 'message' => 'Survey already completed'], 400);
         }
         
-        $validated = $request->validate([
+        // Get question first for dynamic validation
+        $question = SurveyQuestion::findOrFail($request->question_id);
+        
+        // Build dynamic validation rules
+        $validationRules = [
             'question_id' => 'required|exists:survey_questions,question_id',
             'answer_type' => 'required|in:text,option,rating,checkbox',
             'answer_text' => 'nullable|string',
             'option_id' => 'nullable|exists:survey_options,option_id',
-            'rating_value' => 'nullable|integer|min:1|max:5',
             'selected_options' => 'nullable|array',
             'selected_options.*' => 'exists:survey_options,option_id',
-        ]);
+        ];
         
-        // Get question to validate
-        $question = SurveyQuestion::findOrFail($validated['question_id']);
+        // Add rating validation if answer_type is rating
+        if ($request->answer_type === 'rating') {
+            $minValue = $question->validation_rules['min_value'] ?? 1;
+            $maxValue = $question->validation_rules['max_value'] ?? 5;
+            $validationRules['rating_value'] = "nullable|integer|min:{$minValue}|max:{$maxValue}";
+        } else {
+            $validationRules['rating_value'] = 'nullable|integer';
+        }
+        
+        $validated = $request->validate($validationRules);
         
         // Prepare answer data
         $answerData = [
@@ -214,9 +225,11 @@ class SurveyController extends Controller
         // Calculate new progress
         $totalQuestions = SurveyQuestion::where('session_id', $response->session_id)->count();
         $answeredQuestions = Answer::where('response_id', $response->response_id)
-            ->whereNotNull('answer_text')
-            ->orWhereNotNull('option_id')
-            ->orWhereNotNull('rating_value')
+            ->where(function($query) {
+                $query->whereNotNull('answer_text')
+                      ->orWhereNotNull('option_id')
+                      ->orWhereNotNull('rating_value');
+            })
             ->count();
         $progress = $totalQuestions > 0 ? round(($answeredQuestions / $totalQuestions) * 100) : 0;
         
@@ -224,6 +237,7 @@ class SurveyController extends Controller
             'success' => true,
             'message' => 'Jawaban berhasil disimpan',
             'progress' => $progress,
+            'answered_count' => $answeredQuestions,
             'saved_at' => now()->format('H:i'),
         ]);
     }

@@ -8,7 +8,7 @@
         
         <!-- Back Button -->
         <div class="mb-6">
-            <a href="{{ route('alumni.survey.index') }}" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+            <a href="{{ route('alumni.survey.index') }}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -17,17 +17,29 @@
         </div>
 
         <!-- Main Card -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             
             <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-10 text-center">
-                <div class="mx-auto w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
+            <div class="bg-white border-b border-gray-200 px-8 py-8">
+                <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ $session->year }}
+                            </span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-800">
+                                Aktif
+                            </span>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-900">Tracer Study {{ $session->year }}</h1>
+                        <p class="text-sm text-gray-500 mt-1">Survey Pelacakan Alumni - Informasi Karir dan Kompetensi Lulusan</p>
+                    </div>
                 </div>
-                <h1 class="text-3xl font-bold text-white mb-2">Tracer Study {{ $session->year }}</h1>
-                <p class="text-blue-100">Survey Pelacakan Alumni</p>
             </div>
 
             <!-- Content -->
@@ -35,8 +47,8 @@
                 
                 <!-- Welcome Message -->
                 <div class="mb-8">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-3">Selamat Datang!</h2>
-                    <p class="text-gray-700 leading-relaxed">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-3">Selamat Datang!</h2>
+                    <p class="text-gray-600 leading-relaxed">
                         Tracer study ini bertujuan untuk mengetahui kondisi alumni setelah lulus dari program studi. 
                         Data yang Anda berikan akan membantu institusi dalam meningkatkan kualitas pendidikan dan 
                         relevansi kurikulum dengan kebutuhan dunia kerja.
@@ -44,7 +56,7 @@
                 </div>
 
                 @if($session->description)
-                    <div class="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                    <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <p class="text-sm text-blue-900">{{ $session->description }}</p>
                     </div>
                 @endif
@@ -154,7 +166,7 @@
                     
                     <form action="{{ route('alumni.survey.start', $session) }}" method="POST">
                         @csrf
-                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-xl">
+                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </svg>

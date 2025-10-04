@@ -447,7 +447,7 @@
                         <span class="text-sm font-bold text-gray-900">{{ $completedSteps }}/{{ $totalSteps }} Tahap Selesai</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 h-3 rounded-full transition-all duration-500" style="width: {{ $overallProgress }}%"></div>
+                        <div class="bg-blue-600 h-3 rounded-full transition-all duration-500" style="width: {{ $overallProgress }}%"></div>
                     </div>
                     @if($overallProgress == 100)
                         <p class="text-xs text-green-600 mt-2 font-medium">🎉 Selamat! Anda telah menyelesaikan semua tahapan.</p>

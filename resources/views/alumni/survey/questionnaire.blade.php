@@ -255,12 +255,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Radio and Select inputs
+    // Radio and Select inputs (excluding rating type)
     document.querySelectorAll('input[type="radio"], select').forEach(input => {
         input.addEventListener('change', function() {
             const questionCard = this.closest('.question-card');
-            const questionId = questionCard.dataset.questionId;
+            if (!questionCard) return;
             
+            const questionId = questionCard.dataset.questionId;
+            const inputName = this.name;
+            
+            // Check if this is a rating question by checking the name pattern
+            if (inputName.startsWith('answer_')) {
+                // This might be a rating question, let's check if the parent has rating-specific classes
+                const ratingContainer = this.closest('.max-w-2xl');
+                if (ratingContainer && ratingContainer.querySelector('.aspect-square')) {
+                    // This is a rating question
+                    saveAnswer(questionId, {
+                        answer_type: 'rating',
+                        rating_value: parseInt(this.value)
+                    });
+                    return;
+                }
+            }
+            
+            // Regular radio/select option
             saveAnswer(questionId, {
                 answer_type: 'option',
                 option_id: this.value
@@ -279,19 +297,6 @@ document.addEventListener('DOMContentLoaded', function() {
             saveAnswer(questionId, {
                 answer_type: 'checkbox',
                 selected_options: selectedOptions
-            });
-        });
-    });
-    
-    // Rating inputs
-    document.querySelectorAll('input[name^="rating"]').forEach(input => {
-        input.addEventListener('change', function() {
-            const questionCard = this.closest('.question-card');
-            const questionId = questionCard.dataset.questionId;
-            
-            saveAnswer(questionId, {
-                answer_type: 'rating',
-                rating_value: parseInt(this.value)
             });
         });
     });
