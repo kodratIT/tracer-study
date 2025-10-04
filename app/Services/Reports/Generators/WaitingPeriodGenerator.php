@@ -138,14 +138,6 @@ class WaitingPeriodGenerator extends BaseGenerator
     }
 
     /**
-     * Get detailed alumni list with waiting periods
-     */
-    protected function getDetails(Report $report): array
-    {
-        return $this->getWaitingPeriods($report);
-    }
-
-    /**
      * Get waiting periods for all alumni
      * 
      * Waiting period = time between graduation and first employment
