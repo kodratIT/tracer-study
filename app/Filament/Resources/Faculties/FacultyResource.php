@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class FacultyResource extends Resource
+{
     use HasPageShield;
     
-{
     protected static ?string $model = Faculty::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;

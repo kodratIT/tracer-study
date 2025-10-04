@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class EmploymentResource extends Resource
+{
     use HasPageShield;
     
-{
     protected static ?string $model = EmploymentHistory::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;

@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class TracerStudySessionResource extends Resource
+{
     use HasPageShield;
     
-{
     protected static ?string $model = TracerStudySession::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;

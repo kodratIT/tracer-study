@@ -14,9 +14,9 @@ use Filament\Tables\Table;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class SurveyResponseResource extends Resource
+{
     use HasPageShield;
     
-{
     protected static ?string $model = SurveyResponse::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
