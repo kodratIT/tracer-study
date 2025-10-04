@@ -6,8 +6,25 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Alumni\AuthController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing-2-academic');
 });
+
+// Landing Page Routes
+Route::get('/landing', function () {
+    return view('landing-index');
+})->name('landing.index');
+
+Route::get('/landing/modern', function () {
+    return view('landing-1-modern');
+})->name('landing.modern');
+
+Route::get('/landing/academic', function () {
+    return view('landing-2-academic');
+})->name('landing.academic');
+
+Route::get('/landing/minimalist', function () {
+    return view('landing-3-minimalist');
+})->name('landing.minimalist');
 
 // Alumni Portal Routes
 Route::prefix('alumni')->name('alumni.')->group(function () {
