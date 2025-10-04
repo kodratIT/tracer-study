@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::table('addresses', function (Blueprint $table) {
-        //     $table->string('district')->nullable()->after('city');
-        //     $table->string('village')->nullable()->after('district');
-        // });
+        Schema::table('addresses', function (Blueprint $table) {
+            $table->string('district')->nullable()->after('city');
+            $table->string('village')->nullable()->after('district');
+        });
     }
 
     /**
@@ -22,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::table('addresses', function (Blueprint $table) {
-        //     $table->dropColumn(['district', 'village']);
-        // });
+        Schema::table('addresses', function (Blueprint $table) {
+            $table->dropColumn(['district', 'village']);
+        });
     }
 };

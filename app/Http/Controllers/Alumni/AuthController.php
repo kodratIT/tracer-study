@@ -47,26 +47,69 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|string|unique:alumni,student_id',
+            'student_id' => 'required|string',
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:alumni,email',
+            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'graduation_year' => 'required|integer|min:1980|max:' . date('Y'),
         ]);
 
-        $alumni = Alumni::create([
-            'student_id' => $request->student_id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'graduation_year' => $request->graduation_year,
-        ]);
+        // Check if alumni with same student_id and email exists
+        $existingAlumni = Alumni::where('student_id', $request->student_id)
+            ->where('email', $request->email)
+            ->first();
 
-        Auth::guard('alumni')->login($alumni);
+        if ($existingAlumni) {
+            // Alumni exists, check if password is empty
+            if (empty($existingAlumni->password) || is_null($existingAlumni->password)) {
+                // Update password
+                $existingAlumni->update([
+                    'password' => Hash::make($request->password),
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'graduation_year' => $request->graduation_year,
+                ]);
 
-        return redirect('/alumni/dashboard');
+                Auth::guard('alumni')->login($existingAlumni);
+
+                return redirect()->route('alumni.dashboard')
+                    ->with('success', 'Password berhasil dibuat! Anda telah berhasil login.');
+            } else {
+                // Alumni already has password
+                return back()
+                    ->withInput($request->except('password', 'password_confirmation'))
+                    ->withErrors([
+                        'email' => 'Email dan ID Mahasiswa sudah terdaftar dan memiliki password. Silakan login.',
+                    ]);
+            }
+        }
+
+        // Check if student_id or email exists separately
+        $studentIdExists = Alumni::where('student_id', $request->student_id)->exists();
+        $emailExists = Alumni::where('email', $request->email)->exists();
+
+        if ($studentIdExists || $emailExists) {
+            $errors = [];
+            if ($studentIdExists) {
+                $errors['student_id'] = 'ID Mahasiswa tidak terdaftar dalam sistem atau tidak cocok dengan email yang dimasukkan.';
+            }
+            if ($emailExists) {
+                $errors['email'] = 'Email tidak terdaftar dalam sistem atau tidak cocok dengan ID Mahasiswa yang dimasukkan.';
+            }
+
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->withErrors($errors);
+        }
+
+        // If both don't exist, show error
+        return back()
+            ->withInput($request->except('password', 'password_confirmation'))
+            ->withErrors([
+                'student_id' => 'ID Mahasiswa dan Email tidak terdaftar dalam sistem. Silakan hubungi admin.',
+                'email' => 'ID Mahasiswa dan Email tidak terdaftar dalam sistem. Silakan hubungi admin.',
+            ]);
     }
 
     public function logout(Request $request)

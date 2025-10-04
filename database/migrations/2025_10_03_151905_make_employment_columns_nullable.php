@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::table('employment_histories', function (Blueprint $table) {
-        //     // Make columns nullable for unemployed and studying status
-        //     $table->string('job_title')->nullable()->change();
-        //     $table->string('job_level')->nullable()->change();
-        //     $table->string('contract_type')->nullable()->change();
-        // });
+        Schema::table('employment_histories', function (Blueprint $table) {
+            // Make columns nullable for unemployed and studying status
+            $table->string('job_title')->nullable()->change();
+            $table->string('job_level')->nullable()->change();
+            $table->string('contract_type')->nullable()->change();
+        });
     }
 
     /**
@@ -24,11 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::table('employment_histories', function (Blueprint $table) {
-        //     // Revert back to NOT NULL (if needed)
-        //     $table->string('job_title')->nullable(false)->change();
-        //     $table->string('job_level')->nullable(false)->change();
-        //     $table->string('contract_type')->nullable(false)->change();
-        // });
+        Schema::table('employment_histories', function (Blueprint $table) {
+            // Revert back to NOT NULL (if needed)
+            $table->string('job_title')->nullable(false)->change();
+            $table->string('job_level')->nullable(false)->change();
+            $table->string('contract_type')->nullable(false)->change();
+        });
     }
 };
