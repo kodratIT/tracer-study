@@ -18,8 +18,8 @@ class Dashboard extends BaseDashboard
             // Alumni & Employment Summary
             \App\Filament\Widgets\AlumniEmploymentStatsWidget::class,
             
-            // Quick Actions
-            \App\Filament\Widgets\QuickActionsWidget::class,
+            // Trend Chart
+            \App\Filament\Widgets\AlumniTrendChartWidget::class,
         ];
     }
 
