@@ -9,168 +9,160 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Modules\Reports\Models\Report;
 use Modules\Survey\Models\TracerStudySession;
 use Modules\Education\Models\Program;
 use Modules\Alumni\Models\Alumni;
 use Illuminate\Support\Facades\Cache;
+use App\Services\Reports\ReportGeneratorService;
 
 class ReportForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $currentYear = date('Y');
+        
         return $schema
             ->components([
-                Section::make('Informasi Laporan')
-                    ->description('Konfigurasi dasar untuk laporan BAN-PT')
-                    ->components([
-                        Grid::make(2)
-                            ->components([
-                                TextInput::make('title')
-                                    ->label('Judul Laporan')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->live(onBlur: true)
-                                    ->placeholder('contoh: Laporan Tracer Study 2024'),
+                Section::make('📊 Generate Laporan Tracer Study')
+                    ->description('Pilih jenis laporan dan konfigurasi yang diinginkan')
+                    ->schema([
+                        Select::make('report_type')
+                            ->label('Jenis Laporan')
+                            ->required()
+                            ->options([
+                                'response_rate' => '📈 Laporan Response Rate - Monitor tingkat partisipasi alumni',
+                                'employment_statistics' => '💼 Laporan Statistik Ketenagakerjaan - Status pekerjaan alumni',
+                                'waiting_period' => '⏱️ Laporan Masa Tunggu Kerja - Waktu mendapat pekerjaan pertama',
+                                'job_relevance' => '🎯 Laporan Relevansi Pekerjaan - Kesesuaian bidang kerja',
+                                'salary_analysis' => '💰 Laporan Analisis Gaji - Pendapatan alumni',
+                                'competency_analysis' => '🎓 Laporan Analisis Kompetensi - Gap analysis skills',
+                                'geographic_distribution' => '🗺️ Laporan Distribusi Geografis - Sebaran lokasi kerja',
+                                'ban_pt_standard' => '📋 Laporan Standar BAN-PT - Laporan lengkap akreditasi',
+                            ])
+                            ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                // Auto-generate title
+                                $session = TracerStudySession::find($get('session_id'));
+                                $title = ReportGeneratorService::getDefaultTitle($state, $session);
+                                $set('title', $title);
+                            })
+                            ->helperText('Pilih jenis laporan yang akan di-generate')
+                            ->columnSpanFull(),
 
-                                Select::make('report_type')
-                                    ->label('Jenis Laporan')
-                                    ->required()
-                                    ->options(Report::REPORT_TYPES)
-                                    ->live()
-                                    ->placeholder('Pilih jenis laporan'),
-                            ]),
-
-                        Grid::make(2)
-                            ->components([
-                                Select::make('session_id')
-                                    ->label('Sesi Tracer Study')
-                                    ->options(function () {
-                                        return Cache::remember('tracer_study_sessions_options', 300, function () {
-                                            return TracerStudySession::select('session_id', 'year', 'start_date', 'end_date')
-                                                ->orderBy('year', 'desc')
-                                                ->limit(50)
-                                                ->get()
-                                                ->mapWithKeys(function ($session) {
-                                                    $displayName = "Tracer Study {$session->year} ({$session->start_date->format('M d')} - {$session->end_date->format('M d')})";
-                                                    return [$session->session_id => $displayName];
-                                                });
-                                        });
-                                    })
-                                    ->searchable()
-                                    ->placeholder('Pilih sesi tracer study'),
-
-                                Select::make('file_format')
-                                    ->label('Format File')
-                                    ->options([
-                                        Report::FORMAT_PDF => 'PDF',
-                                        Report::FORMAT_EXCEL => 'Excel',
-                                        Report::FORMAT_CSV => 'CSV',
-                                    ])
-                                    ->default(Report::FORMAT_PDF)
-                                    ->required(),
-                            ]),
+                        TextInput::make('title')
+                            ->label('Judul Laporan')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Auto-generated berdasarkan jenis laporan')
+                            ->helperText('Judul dapat diubah sesuai kebutuhan')
+                            ->columnSpanFull(),
                     ]),
 
-                Section::make('Parameter Laporan')
-                    ->description('Konfigurasi filter dan parameter tambahan')
-                    ->collapsible()
-                    ->collapsed()
-                    ->components([
-                        Grid::make(2)
-                            ->components([
-                                Select::make('parameters.graduation_years')
-                                    ->label('Tahun Lulus')
-                                    ->multiple()
-                                    ->options(function () {
-                                        return Cache::remember('graduation_years_options', 1800, function () {
-                                            $years = [];
-                                            $currentYear = date('Y');
-                                            for ($year = $currentYear; $year >= $currentYear - 15; $year--) {
-                                                $years[$year] = $year;
-                                            }
-                                            return $years;
-                                        });
-                                    })
-                                    ->placeholder('Semua tahun lulus'),
+                Section::make('🎯 Tracer Study Session')
+                    ->description('Pilih sesi tracer study untuk laporan')
+                    ->schema([
+                        Select::make('session_id')
+                            ->label('Tracer Study Session')
+                            ->options(function () {
+                                return TracerStudySession::orderBy('year', 'desc')
+                                    ->get()
+                                    ->mapWithKeys(function ($session) {
+                                        $label = "Tracer Study {$session->year}";
+                                        if ($session->is_active) {
+                                            $label .= " (Aktif)";
+                                        }
+                                        return [$session->session_id => $label];
+                                    });
+                            })
+                            ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                // Update title when session changes
+                                if ($get('report_type')) {
+                                    $session = TracerStudySession::find($state);
+                                    $title = ReportGeneratorService::getDefaultTitle($get('report_type'), $session);
+                                    $set('title', $title);
+                                }
+                            })
+                            ->helperText('Kosongkan untuk include semua sesi')
+                            ->columnSpanFull(),
+                    ]),
 
-                                Select::make('parameters.programs')
+                Section::make('🔍 Filter (Opsional)')
+                    ->description('Filter data berdasarkan kriteria tertentu')
+                    ->collapsed()
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('parameters.program_ids')
                                     ->label('Program Studi')
                                     ->multiple()
                                     ->options(function () {
-                                        return Cache::remember('programs_options', 600, function () {
-                                            return Program::select('program_id', 'program_name')
-                                                ->whereHas('alumni')
-                                                ->orderBy('program_name')
-                                                ->pluck('program_name', 'program_id');
-                                        });
+                                        return Program::orderBy('program_name')
+                                            ->pluck('program_name', 'program_id');
                                     })
                                     ->searchable()
-                                    ->placeholder('Semua program studi'),
+                                    ->helperText('Kosongkan untuk semua program'),
+
+                                Select::make('parameters.graduation_year_from')
+                                    ->label('Tahun Lulus Dari')
+                                    ->options(function () use ($currentYear) {
+                                        $years = [];
+                                        for ($year = $currentYear; $year >= $currentYear - 10; $year--) {
+                                            $years[$year] = $year;
+                                        }
+                                        return $years;
+                                    })
+                                    ->helperText('Filter tahun lulus minimum'),
                             ]),
 
-                        Grid::make(2)
-                            ->components([
-                                Select::make('parameters.completion_status')
-                                    ->label('Status Respons')
-                                    ->multiple()
-                                    ->options([
-                                        'completed' => 'Selesai',
-                                        'partial' => 'Sebagian',
-                                        'draft' => 'Draft',
-                                    ])
-                                    ->default(['completed'])
-                                    ->placeholder('Semua status'),
+                        Select::make('parameters.graduation_year_to')
+                            ->label('Tahun Lulus Sampai')
+                            ->options(function () use ($currentYear) {
+                                $years = [];
+                                for ($year = $currentYear + 5; $year >= $currentYear - 10; $year--) {
+                                    $years[$year] = $year;
+                                }
+                                return $years;
+                            })
+                            ->helperText('Filter tahun lulus maksimum')
+                            ->columnSpanFull(),
+                    ]),
 
-                                Select::make('parameters.employment_status')
-                                    ->label('Status Ketenagakerjaan')
-                                    ->multiple()
-                                    ->options([
-                                        'employed' => 'Bekerja',
-                                        'unemployed' => 'Tidak Bekerja',
-                                        'entrepreneur' => 'Wirausaha',
-                                        'continuing_study' => 'Melanjutkan Studi',
-                                    ])
-                                    ->placeholder('Semua status ketenagakerjaan'),
-                            ]),
-                    ])
-                    ->visible(fn ($get) => in_array($get('report_type'), [
-                        'employment_statistics',
-                        'waiting_period', 
-                        'job_relevance',
-                        'ban_pt_standard'
-                    ])),
-
-                Section::make('Pengaturan Tambahan')
-                    ->description('Konfigurasi tambahan untuk laporan')
-                    ->components([
+                Section::make('📄 Output')
+                    ->description('Konfigurasi format dan output laporan')
+                    ->schema([
                         Grid::make(3)
-                            ->components([
-                                Checkbox::make('parameters.include_charts')
+                            ->schema([
+                                Select::make('file_format')
+                                    ->label('Format File')
+                                    ->options([
+                                        Report::FORMAT_PDF => '📕 PDF',
+                                        Report::FORMAT_EXCEL => '📗 Excel',
+                                        Report::FORMAT_CSV => '📄 CSV',
+                                    ])
+                                    ->default(Report::FORMAT_PDF)
+                                    ->required()
+                                    ->helperText('Format file yang akan di-generate'),
+
+                                Toggle::make('parameters.include_charts')
                                     ->label('Sertakan Grafik')
                                     ->default(true)
-                                    ->helperText('Tambahkan grafik dan visualisasi data'),
+                                    ->helperText('Untuk PDF & Excel')
+                                    ->inline(false),
 
-                                Checkbox::make('parameters.include_raw_data')
-                                    ->label('Sertakan Data Mentah')
-                                    ->default(false)
-                                    ->helperText('Tambahkan tabel data mentah di lampiran'),
-
-                                Checkbox::make('parameters.auto_expire')
-                                    ->label('Kedaluwarsa Otomatis')
+                                Toggle::make('parameters.include_detailed_data')
+                                    ->label('Sertakan Detail Data')
                                     ->default(true)
-                                    ->helperText('Hapus otomatis setelah 30 hari'),
+                                    ->helperText('Data lengkap per alumni')
+                                    ->inline(false),
                             ]),
+                    ]),
 
-                        KeyValue::make('parameters.custom_filters')
-                            ->label('Filter Kustom')
-                            ->keyLabel('Parameter')
-                            ->valueLabel('Nilai')
-                            ->helperText('Tambahkan filter kustom sesuai kebutuhan'),
-                    ])
-                    ->collapsed(),
             ]);
     }
 }
