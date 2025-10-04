@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::table('employment_histories', function (Blueprint $table) {
             // Add is_active field to track current employment status
             $table->boolean('is_active')->default(false)->after('employment_status');
-            
-            // Remove last_updated_at as we don't need 6 months lock anymore
-            $table->dropColumn('last_updated_at');
         });
     }
 
@@ -26,9 +23,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('employment_histories', function (Blueprint $table) {
-            // Restore last_updated_at
-            $table->timestamp('last_updated_at')->nullable();
-            
             // Remove is_active
             $table->dropColumn('is_active');
         });

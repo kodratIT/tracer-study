@@ -167,36 +167,27 @@ class TracerStudySeeder extends Seeder
         foreach ($alumniIds as $alumniId) {
             // 85% chance of having employment
             if ($faker->boolean(85)) {
-                $numberOfJobs = $faker->numberBetween(1, 3);
+                $position = $faker->randomElement($positions);
                 
-                for ($j = 0; $j < $numberOfJobs; $j++) {
-                    $isCurrentJob = ($j === $numberOfJobs - 1) && $faker->boolean(70);
-                    $startDate = $faker->dateTimeBetween('-5 years', $isCurrentJob ? '-1 month' : '-6 months');
-                    $endDate = $isCurrentJob ? null : $faker->dateTimeBetween($startDate, 'now');
-                    
-                    $position = $faker->randomElement($positions);
-                    $baseSalary = 4000000;
-                    $multiplier = 1;
-                    
-                    if (strpos($position, 'Senior') !== false || strpos($position, 'Manager') !== false) {
-                        $multiplier = 2.5;
-                    }
-                    
-                    $salary = $baseSalary * $multiplier * $faker->randomFloat(2, 0.8, 1.5);
-
-                    DB::table('employment_histories')->insert([
-                        'alumni_id' => $alumniId,
-                        'employer_id' => $faker->numberBetween(1, 5),
-                        'job_title' => $position,
-                        'job_level' => $faker->randomElement(['entry', 'junior', 'senior', 'lead', 'manager']),
-                        'contract_type' => $faker->randomElement(['full_time', 'part_time', 'contract', 'freelance']),
-                        'start_date' => $startDate->format('Y-m-d'),
-                        'end_date' => $endDate ? $endDate->format('Y-m-d') : null,
-                        'salary_range' => number_format($salary) . ' - ' . number_format($salary * 1.2),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
+                $startDate = $faker->dateTimeBetween('-3 years', '-1 month');
+                $isCurrentJob = $faker->boolean(60);
+                
+                DB::table('employment_histories')->insert([
+                    'alumni_id' => $alumniId,
+                    'employer_id' => $faker->numberBetween(1, 5),
+                    'job_title' => $position,
+                    'company_name' => $faker->company(),
+                    'job_level' => $faker->randomElement(['entry', 'junior', 'mid', 'senior', 'lead', 'manager']),
+                    'start_date' => $startDate->format('Y-m-d'),
+                    'end_date' => $isCurrentJob ? null : $faker->dateTimeBetween($startDate, 'now')->format('Y-m-d'),
+                    'salary_range' => $faker->randomElement(['< 5 juta', '5-10 juta', '10-15 juta', '15-20 juta', '> 20 juta']),
+                    'contract_type' => $faker->randomElement(['full_time', 'part_time', 'contract', 'freelance', 'internship']),
+                    'employment_status' => $faker->randomElement(['employed', 'unemployed', 'studying', 'entrepreneur']),
+                    'job_description' => $faker->optional()->sentence(10),
+                    'is_active' => $isCurrentJob ? 1 : 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
         }
     }

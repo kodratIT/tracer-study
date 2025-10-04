@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('employment_histories', function (Blueprint $table) {
-            $table->string('company_name')->nullable()->after('job_title');
-        });
+        // DISABLED: company_name column already exists in create_employment_histories_table migration
+        // No action needed
     }
 
     /**
@@ -21,8 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('employment_histories', function (Blueprint $table) {
-            $table->dropColumn('company_name');
-        });
+        // No action needed
     }
 };

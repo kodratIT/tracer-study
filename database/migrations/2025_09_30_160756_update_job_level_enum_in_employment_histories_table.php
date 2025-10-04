@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         // Update job_level enum to include all the levels we use in the form
-        DB::statement("ALTER TABLE employment_histories MODIFY job_level ENUM('entry', 'junior', 'mid', 'senior', 'lead', 'supervisor', 'manager', 'director', 'vp', 'ceo')");
+        // DB::statement("ALTER TABLE employment_histories MODIFY job_level ENUM('entry', 'junior', 'mid', 'senior', 'lead', 'supervisor', 'manager', 'director', 'vp', 'ceo')");
     }
 
     /**
@@ -22,6 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         // Revert back to the original enum values
-        DB::statement("ALTER TABLE employment_histories MODIFY job_level ENUM('entry', 'junior', 'senior', 'lead', 'manager', 'director', 'executive')");
+        // DB::statement("ALTER TABLE employment_histories MODIFY job_level ENUM('entry', 'junior', 'senior', 'lead', 'manager', 'director', 'executive')");
     }
 };

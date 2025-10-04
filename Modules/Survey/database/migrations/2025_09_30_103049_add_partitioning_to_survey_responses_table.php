@@ -12,18 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Note: MySQL partitioning only works on MySQL, skip for other databases
-        if (DB::getDriverName() === 'mysql') {
-            DB::statement("
-                ALTER TABLE survey_responses 
-                PARTITION BY RANGE (session_id) (
-                    PARTITION p_session_2024 VALUES LESS THAN (100),
-                    PARTITION p_session_2025 VALUES LESS THAN (200),
-                    PARTITION p_session_2026 VALUES LESS THAN (300),
-                    PARTITION p_session_future VALUES LESS THAN MAXVALUE
-                )
-            ");
-        }
+        // DISABLED: MySQL partitioning has complex requirements:
+        // 1. Primary key must include partition column (session_id)
+        // 2. Foreign keys are not supported with partitioning
+        // 
+        // This would require changing the table structure significantly.
+        // Partitioning is an optimization and not required for functionality.
+        // Skip this migration for now.
+        
+        // If needed in production, consider using separate tables per year instead.
     }
 
     /**
@@ -31,8 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (DB::getDriverName() === 'mysql') {
-            DB::statement("ALTER TABLE survey_responses REMOVE PARTITIONING");
-        }
+        // No action needed since partitioning is disabled
     }
 };

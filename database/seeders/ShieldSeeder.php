@@ -70,8 +70,8 @@ class ShieldSeeder extends Seeder
             'access_admin_panel',
         ]);
 
-        // Create Super Admin User
-        $superAdmin = User::firstOrCreate(
+        // Create or update Super Admin User
+        $superAdmin = User::updateOrCreate(
             ['email' => 'admin@tracerstudy.test'],
             [
                 'name' => 'Super Admin',
@@ -80,10 +80,12 @@ class ShieldSeeder extends Seeder
             ]
         );
 
-        $superAdmin->assignRole($superAdminRole);
+        if (!$superAdmin->hasRole($superAdminRole)) {
+            $superAdmin->assignRole($superAdminRole);
+        }
 
-        // Create Demo Staff User
-        $staff = User::firstOrCreate(
+        // Create or update Demo Staff User
+        $staff = User::updateOrCreate(
             ['email' => 'staff@tracerstudy.test'],
             [
                 'name' => 'Staff User',
@@ -92,10 +94,12 @@ class ShieldSeeder extends Seeder
             ]
         );
 
-        $staff->assignRole($staffRole);
+        if (!$staff->hasRole($staffRole)) {
+            $staff->syncRoles([$staffRole]);
+        }
 
-        // Create Demo Viewer User
-        $viewer = User::firstOrCreate(
+        // Create or update Demo Viewer User
+        $viewer = User::updateOrCreate(
             ['email' => 'viewer@tracerstudy.test'],
             [
                 'name' => 'Viewer User',
@@ -104,7 +108,9 @@ class ShieldSeeder extends Seeder
             ]
         );
 
-        $viewer->assignRole($viewerRole);
+        if (!$viewer->hasRole($viewerRole)) {
+            $viewer->syncRoles([$viewerRole]);
+        }
 
         $this->command->info('Shield seeding completed!');
         $this->command->info('');

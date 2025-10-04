@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('employment_histories', function (Blueprint $table) {
-            $table->dropColumn('company_name');
-        });
+        // Disabled - Keep company_name column
+        // Schema::table('employment_histories', function (Blueprint $table) {
+        //     $table->dropColumn('company_name');
+        // });
     }
 
     /**
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('employment_histories', function (Blueprint $table) {
-            $table->string('company_name')->nullable()->after('employer_id');
-        });
+        // Disabled
+        // Schema::table('employment_histories', function (Blueprint $table) {
+        //     $table->string('company_name')->nullable()->after('employer_id');
+        // });
     }
 };

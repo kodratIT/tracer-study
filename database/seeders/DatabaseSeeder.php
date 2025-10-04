@@ -13,11 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create default admin user
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@tracerstudy.com',
-        ]);
+        // Run Shield seeder first to create users with proper roles
+        $this->call(ShieldSeeder::class);
 
         // Run comprehensive tracer study seeding
         $this->call(TracerStudySeeder::class);

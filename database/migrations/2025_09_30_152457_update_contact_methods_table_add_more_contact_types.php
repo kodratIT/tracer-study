@@ -12,8 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Change the contact_type enum to include all the types we use in the form
-        DB::statement("ALTER TABLE contact_methods MODIFY contact_type ENUM('email', 'phone', 'whatsapp', 'linkedin', 'instagram', 'facebook', 'twitter', 'youtube', 'tiktok', 'github', 'website', 'other')");
+        // DISABLED: All contact types already exist in the create_contact_methods_table migration
+        // The original migration already includes: 'whatsapp', 'youtube', 'tiktok', 'github', 'other'
+        // No action needed
     }
 
     /**
@@ -21,7 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert back to the original enum values
-        DB::statement("ALTER TABLE contact_methods MODIFY contact_type ENUM('email', 'phone', 'linkedin', 'instagram', 'facebook', 'twitter', 'website')");
+        // No action needed
     }
 };

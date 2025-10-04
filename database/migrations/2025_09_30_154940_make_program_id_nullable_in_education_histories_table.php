@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('education_histories', function (Blueprint $table) {
-            // Make program_id nullable and drop foreign key constraint
-            $table->dropForeign(['program_id']);
-            $table->unsignedBigInteger('program_id')->nullable()->change();
+        // Schema::table('education_histories', function (Blueprint $table) {
+        //     // Make program_id nullable and drop foreign key constraint
+        //     $table->dropForeign(['program_id']);
+        //     $table->unsignedBigInteger('program_id')->nullable()->change();
             
-            // Add back foreign key constraint but allow nulls
-            $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('set null');
-        });
+        //     // Add back foreign key constraint but allow nulls
+        //     $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('set null');
+        // });
     }
 
     /**
@@ -26,11 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('education_histories', function (Blueprint $table) {
-            // Revert back to non-nullable and original constraint
-            $table->dropForeign(['program_id']);
-            $table->unsignedBigInteger('program_id')->nullable(false)->change();
-            $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('cascade');
-        });
+        // Schema::table('education_histories', function (Blueprint $table) {
+        //     // Revert back to non-nullable and original constraint
+        //     $table->dropForeign(['program_id']);
+        //     $table->unsignedBigInteger('program_id')->nullable(false)->change();
+        //     $table->foreign('program_id')->references('program_id')->on('programs')->onDelete('cascade');
+        // });
     }
 };

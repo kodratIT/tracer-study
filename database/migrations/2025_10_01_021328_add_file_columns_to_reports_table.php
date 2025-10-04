@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reports', function (Blueprint $table) {
-            $table->string('file_path')->nullable()->after('status');
-            $table->bigInteger('file_size')->nullable()->after('file_path');
-            $table->timestamp('completed_at')->nullable()->after('file_size');
-            $table->text('error_message')->nullable()->after('completed_at');
-        });
+        // DISABLED: The complete reports table structure is defined in
+        // Modules/Reports/database/migrations/2025_10_01_012728_create_reports_table.php
+        // file_path and other columns already exist there
     }
 
     /**
@@ -24,8 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reports', function (Blueprint $table) {
-            $table->dropColumn(['file_path', 'file_size', 'completed_at', 'error_message']);
-        });
+        // No action needed
     }
 };
