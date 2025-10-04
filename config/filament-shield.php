@@ -99,9 +99,9 @@ return [
     */
 
     'permissions' => [
-        'separator' => ':',
-        'case' => 'pascal',
-        'generate' => true,
+        'separator' => '_',
+        'case' => 'snake',
+        'generate' => false,
     ],
 
     /*
