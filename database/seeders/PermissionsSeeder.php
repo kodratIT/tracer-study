@@ -27,7 +27,7 @@ class PermissionsSeeder extends Seeder
             'tracer_study_session',
             'report',
             'role',
-            'user',
+            'user', // User management
         ];
 
         // Define permission actions
