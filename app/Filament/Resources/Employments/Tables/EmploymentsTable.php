@@ -5,10 +5,8 @@ namespace App\Filament\Resources\Employments\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -108,16 +106,34 @@ class EmploymentsTable
                         };
                     }),
                     
-                TextColumn::make('start_date')
-                    ->label('Mulai')
-                    ->date('M Y')
+                BadgeColumn::make('employment_status')
+                    ->label('Status Kegiatan')
+                    ->searchable()
                     ->sortable()
-                    ->description(fn ($record) => $record->end_date ? $record->end_date->format('M Y') : 'Sekarang'),
+                    ->colors([
+                        'success' => 'employed',
+                        'warning' => 'entrepreneur',
+                        'info' => 'studying',
+                        'secondary' => 'unemployed',
+                    ])
+                    ->formatStateUsing(function ($state) {
+                        return match($state) {
+                            'employed' => '💼 Bekerja',
+                            'unemployed' => '⏸️ Tidak Bekerja',
+                            'studying' => '📚 Melanjutkan Studi',
+                            'entrepreneur' => '🚀 Wiraswasta',
+                            default => ucfirst($state),
+                        };
+                    }),
                     
-                TextColumn::make('salary_range')
-                    ->label('Gaji')
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('is_active')
+                    ->label('Status Aktif')
+                    ->sortable()
+                    ->boolean()
+                    ->trueColor('success')
+                    ->falseColor('secondary')
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle'),
                     
                 TextColumn::make('created_at')
                     ->label('Dibuat')
@@ -182,31 +198,23 @@ class EmploymentsTable
                     ])
                     ->placeholder('Semua Industri'),
                     
-                Filter::make('start_date')
-                    ->label('Filter Tanggal Mulai')
-                    ->form([
-                        DatePicker::make('start_date_from')
-                            ->label('Mulai Dari Tanggal')
-                            ->placeholder('Pilih tanggal mulai')
-                            ->columnSpan(1),
-                            
-                        DatePicker::make('start_date_to')
-                            ->label('Sampai Tanggal')
-                            ->placeholder('Pilih tanggal akhir')
-                            ->columnSpan(1),
+                SelectFilter::make('employment_status')
+                    ->label('Filter Status Kegiatan')
+                    ->options([
+                        'employed' => '💼 Bekerja',
+                        'unemployed' => '⏸️ Tidak Bekerja',
+                        'studying' => '📚 Melanjutkan Studi',
+                        'entrepreneur' => '🚀 Wiraswasta',
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['start_date_from'],
-                                fn (Builder $query, $date): Builder => $query->where('start_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['start_date_to'],
-                                fn (Builder $query, $date): Builder => $query->where('start_date', '<=', $date),
-                            );
-                    })
-                    ->columns(2),
+                    ->placeholder('Semua Status'),
+                    
+                SelectFilter::make('is_active')
+                    ->label('Filter Status Aktif')
+                    ->options([
+                        1 => 'Aktif',
+                        0 => 'Tidak Aktif',
+                    ])
+                    ->placeholder('Semua'),
             ])
             ->recordActions([
                 EditAction::make()
@@ -220,7 +228,7 @@ class EmploymentsTable
                         ->icon('heroicon-m-trash'),
                 ]),
             ])
-            ->defaultSort('start_date', 'desc')
+            ->defaultSort('is_active', 'desc')
             ->striped()
             ->searchPlaceholder('Cari alumni, jabatan, atau perusahaan...')
             ->emptyStateHeading('Belum Ada Data Riwayat Pekerjaan')
